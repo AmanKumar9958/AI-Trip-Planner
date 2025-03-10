@@ -26,12 +26,12 @@ const Hero = () => {
                 <Button className="px-6 py-3 text-lg">Get Started</Button>
             </div>
 
-            {/* Image (Optional) */}
+            {/* Image with Fixed Size */}
             <div className="mt-8">
                 <img 
                     src="https://plus.unsplash.com/premium_photo-1738854511313-799f13b4d3ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
                     alt="Travel AI" 
-                    className="rounded-lg shadow-md max-w-full"
+                    className="rounded-lg shadow-md w-[40vw] h-[50vh] object-cover"
                 />
             </div>
         </div>
