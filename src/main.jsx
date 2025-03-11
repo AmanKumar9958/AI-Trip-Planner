@@ -1,12 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import Login from './Page/Login.jsx'
-import Signup from './Page/Signup.jsx'
-import Header from './components/custom/Header.jsx'
-import { BrowserRouter, createBrowserRouter, RouterProvider } from "react-router";
-import path from 'path';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.jsx';
+import Login from './Page/Login.jsx';
+import Signup from './Page/Signup.jsx';
+import PlanTrip from './Page/PlanTrip.jsx';
+import Header from './components/custom/Header.jsx';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router=createBrowserRouter(
   [
@@ -20,15 +20,24 @@ const router=createBrowserRouter(
     },
     {
       path: '/signup',
-      element: <Signup />
+      element: (
+        <>
+          <Header />
+          <Signup />
+        </>
+      )
+    },
+    {
+      path: '/plantrip',
+      element: <PlanTrip />
     }
   ]
 )
 
 createRoot(document.getElementById('root')).render(
-  
   <StrictMode>
-    <Header />
-    <RouterProvider router={router} />
+    <RouterProvider router={router}>
+      <Header />
+    </RouterProvider>
   </StrictMode>
-)
+);
