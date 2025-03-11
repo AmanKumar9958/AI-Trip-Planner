@@ -1,15 +1,16 @@
 import React from 'react';
 import { Button } from '../ui/button';
+import { Link } from 'react-router';
 
 const Hero = () => {
     return (
         <div className="max-w-full min-h-screen flex flex-col items-center justify-center p-6">
             {/* Heading */}
             <div className="text-center">
-                <h1 className="text-red-500 text-5xl font-bold">
+                <h1 className="text-red-500 text-5xl font-bold text-center">
                     Discover Your Next Adventure with AI:
                 </h1>
-                <h1 className="text-5xl font-bold">
+                <h1 className="text-5xl font-bold text-center">
                     Personalized Itineraries At Your Fingertips
                 </h1>
             </div>
@@ -23,7 +24,9 @@ const Hero = () => {
 
             {/* CTA Button */}
             <div className="mt-8">
-                <Button className="px-6 py-3 text-lg">Get Started</Button>
+                <Link to={'/plantrip'}>
+                    <Button className="px-6 py-3 text-lg cursor-pointer">Get Started</Button>
+                </Link>
             </div>
 
             {/* Image with Fixed Size */}
