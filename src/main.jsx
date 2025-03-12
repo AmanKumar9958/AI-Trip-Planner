@@ -29,7 +29,12 @@ const router=createBrowserRouter(
     },
     {
       path: '/plantrip',
-      element: <PlanTrip />
+      element: (
+        <>
+          <Header />
+          <PlanTrip />
+        </>
+      )
     }
   ]
 )
