@@ -1,27 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import LocationSearch from '../components/custom/LocationSearch';
-import { GiMoneyStack } from "react-icons/gi";
-import { FaGlassCheers } from "react-icons/fa";
-import { IoIosAirplane } from "react-icons/io";
-import { FaHouseChimney } from "react-icons/fa6";
-import { GiThreeFriends } from "react-icons/gi";
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
+import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options';
 
 const PlanTrip = () => {
-    const budget = [
-        { icon: <GiMoneyStack size={30} />, budget: "Low", amount: "₹3,000 - ₹5,000" },
-        { icon: <GiMoneyStack size={30} />, budget: "Medium", amount: "₹5,000 - ₹10,000" },
-        { icon: <GiMoneyStack size={30} />, budget: "High", amount: "₹10,000 - ₹15,000" }
-    ];
-
-    const members = [
-        { icon: <IoIosAirplane size={30} />, people: "Just Me", },
-        { icon: <FaGlassCheers size={30} />, people: "A Couple", },
-        { icon: <FaHouseChimney size={30} />, people: "Family", },
-        { icon: <GiThreeFriends size={30} />, people: "Friends", }
-    ]
-
     const [formData, setFormData] = useState({});
 
     const handleInputChange = (name, value) => {
@@ -32,19 +15,25 @@ const PlanTrip = () => {
     };    
 
     useEffect(() => {
-
     }, [formData])
 
     const generateTrip = () => {
         if(!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
             !formData?.budget ){
-            // alert("Enter Trip days less than 10")
             toast.error("Please fill all the details correctly.");
             return;
         }
         toast.success("Trip successfully generated! 🎉");
-        console.log(formData);
+
+        const FINAL_PROMPT = AI_PROMPT
+        .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
+        .replace('{totalDays}', formData?.["No of Days: "])
+        .replace('{traveler}', formData?.["Traveling with: "])
+        .replace('{budget}', formData?.budget)
+
+        console.log(FINAL_PROMPT);
+
     }
 
     return (
@@ -76,7 +65,7 @@ const PlanTrip = () => {
             <div className='mt-6 w-full max-w-lg'>
                 <h2 className='mb-3 text-lg font-semibold text-gray-700'>Select your budget</h2>
                 <div className='flex flex-wrap gap-4'>
-                    {budget.map((item, index) => (
+                    {SelectBudget.map((item, index) => (
                         <div 
                             key={index} 
                             className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-md p-2 
@@ -93,15 +82,13 @@ const PlanTrip = () => {
                 </div>
             </div>
 
-
-
             {/* Member Selection */}
             <div className='mt-6 w-full max-w-lg'>
                 <h2 className='mb-3 text-lg font-semibold text-gray-700'>
                     Who do you plan on traveling for your next journey?
                 </h2>
                 <div className='flex flex-wrap gap-4'>
-                    {members.map((item, index) => (
+                    {SelectMembers.map((item, index) => (
                         <div 
                             key={index} 
                             className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-md p-2 
@@ -117,7 +104,6 @@ const PlanTrip = () => {
                     ))}
                 </div>
             </div>
-
 
             {/* Generate Button */}
             <div className='mt-6 w-full max-w-lg flex justify-end'>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const LocationSearch = () => {
+const LocationSearch = ({onChange}) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -29,7 +29,7 @@ const LocationSearch = () => {
       try {
         const response = await fetch(
           `https://api.locationiq.com/v1/autocomplete.php?key=${API_KEY}&q=${query}&limit=5&format=json`
-        );
+        );        
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         setSuggestions(data);
@@ -50,11 +50,15 @@ const LocationSearch = () => {
 
   // Handle selection and console log the selected location
   const handleSelect = (location) => {
-    console.log("Selected Location:", location); // Ensure this logs
-    setQuery(location.display_name);
+    console.log("Selected Location", location);
+    const locationName = location.display_name || location.name || "Unknown Location";
+    setQuery(locationName);
     setSelectedLocation(location);
-    setSuggestions([]); // Hide suggestions
-  };
+    setSuggestions([]);
+    if (onChange) {
+      onChange(locationName);
+    }
+};
 
   return (
     <div ref={searchRef} className="relative w-full max-w-md">
