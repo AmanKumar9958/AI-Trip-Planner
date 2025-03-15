@@ -50,7 +50,6 @@ const LocationSearch = ({onChange}) => {
 
   // Handle selection and console log the selected location
   const handleSelect = (location) => {
-    console.log("Selected Location", location);
     const locationName = location.display_name || location.name || "Unknown Location";
     setQuery(locationName);
     setSelectedLocation(location);

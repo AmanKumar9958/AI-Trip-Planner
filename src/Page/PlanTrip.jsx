@@ -3,9 +3,19 @@ import LocationSearch from '../components/custom/LocationSearch';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options';
+import { chatSession } from '../AI/Modal';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
+    const [openDialog, setOpenDialog] = useState(false);
 
     const handleInputChange = (name, value) => {
         setFormData((prev) => ({
@@ -17,14 +27,41 @@ const PlanTrip = () => {
     useEffect(() => {
     }, [formData])
 
-    const generateTrip = () => {
+
+    // Login..
+    const login = useGoogleLogin({
+        onSuccess: (response) => {
+            getUser(response);
+        },
+        onError: (error) => console.log("Login Error:", error)
+    });
+    
+    const getUser = (userInfo) => {
+        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userInfo.access_token}`, {
+            headers: {
+                Authorization: `Bearer ${userInfo.access_token}`,
+                Accept: 'application/json'
+            }
+        })
+        .then((response) => {
+            localStorage.setItem('user', JSON.stringify(response.data));
+            toast.success("Trip successfully generated! 🎉");
+        })
+        .catch((error) => {
+            console.error("Error fetching user data:", error);
+        });
+    };
+    
+
+    // Generating Trip..
+    const generateTrip = async () => {
         if(!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
             !formData?.budget ){
             toast.error("Please fill all the details correctly.");
             return;
         }
-        toast.success("Trip successfully generated! 🎉");
+        toast.success("Generating Trip, please wait 🙏");
 
         const FINAL_PROMPT = AI_PROMPT
         .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
@@ -32,8 +69,16 @@ const PlanTrip = () => {
         .replace('{traveler}', formData?.["Traveling with: "])
         .replace('{budget}', formData?.budget)
 
-        console.log(FINAL_PROMPT);
+        const result = await chatSession.sendMessage(FINAL_PROMPT);
+        console.log(result.response.text())
 
+        const user = localStorage.getItem('user');
+
+        if(!user){
+            toast.error("No user Found!!");
+            setOpenDialog(true);
+            return;
+        }
     }
 
     return (
@@ -69,9 +114,9 @@ const PlanTrip = () => {
                         <div 
                             key={index} 
                             className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-md p-2 
-                                    cursor-pointer transition-all duration-300 
-                                    hover:shadow-md hover:border-gray-500
-                                    ${formData?.budget === item.budget ? 'border-blue-500 shadow-lg scale-105' : 'border-gray-300'}`}
+                                cursor-pointer transition-all duration-300 
+                                hover:shadow-md hover:border-gray-500
+                                ${formData?.budget === item.budget ? 'border-blue-500 shadow-lg scale-105' : 'border-gray-300'}`}                            
                             onClick={() => handleInputChange('budget', item.budget)}
                         >
                             <div className="text-red-500">{item.icon}</div>
@@ -109,6 +154,28 @@ const PlanTrip = () => {
             <div className='mt-6 w-full max-w-lg flex justify-end'>
                 <Button onClick={generateTrip}>Generate Trip</Button>
             </div>
+
+            {/* Dialog Box */}
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogContent>
+                    <DialogTitle>
+                        <img src="./Logo.svg" alt="Logo" />
+                    </DialogTitle>
+                    <DialogContentText>
+                        <h1>Continue Google</h1>
+                        <p>Sign in to the App with google authentication securely</p>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                    <Button onClick={() => {
+                        login();
+                        setOpenDialog(false);
+                    }}>
+                        <FcGoogle />Sign in with Google
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
