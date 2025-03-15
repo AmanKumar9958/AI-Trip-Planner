@@ -45,7 +45,6 @@ const PlanTrip = () => {
         })
         .then((response) => {
             localStorage.setItem('user', JSON.stringify(response.data));
-            toast.success("Trip successfully generated! 🎉");
         })
         .catch((error) => {
             console.error("Error fetching user data:", error);
@@ -70,7 +69,8 @@ const PlanTrip = () => {
         .replace('{budget}', formData?.budget)
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
-        console.log(result.response.text())
+        console.log(result.response.text())     // displaying the result in the console..
+        toast.success("Trip generated successfully 🎉");
 
         const user = localStorage.getItem('user');
 
