@@ -1,4 +1,6 @@
-![image](https://github.com/user-attachments/assets/d655419e-c3a0-45ab-bdb9-56fbae699adc)# 🧳 AI Trip Planner
+![image](https://github.com/user-attachments/assets/d655419e-c3a0-45ab-bdb9-56fbae699adc)
+
+# 🧳 AI Trip Planner
 
 An intelligent AI-powered trip planning website that helps users generate travel itineraries, find hotels, read reviews, check fares, and explore places to visit based on their preferences. The platform provides a seamless travel planning experience with smart suggestions and personalization.
 
@@ -20,7 +22,7 @@ An intelligent AI-powered trip planning website that helps users generate travel
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js, Tailwind CSS
+- **Frontend**: React.js, FireBase, Tailwind CSS
 - **APIs Used**:
   - **Gemini API** - Generates trip details, itinerary, hotel options, reviews, and fares.
   - **LocationIQ API** - Provides autocomplete suggestions for location search.
