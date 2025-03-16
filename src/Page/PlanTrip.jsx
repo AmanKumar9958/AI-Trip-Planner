@@ -12,6 +12,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
@@ -82,92 +83,108 @@ const PlanTrip = () => {
     }
 
     return (
-        <div className='w-full min-h-screen px-6 py-6 bg-gray-100 flex flex-col items-center'>
+        <div className='w-full min-h-screen px-6 py-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center'>
             {/* Header Section */}
-            <div className='text-center max-w-2xl'>
-                <h1 className='text-4xl font-bold text-gray-800 mb-2'>Tell us your preferences ⛺</h1>
-                <p className='text-lg text-gray-600'>Provide basic details, and our trip planner will create a customized itinerary for you.</p>
+            <div className="text-center max-w-2xl">
+                <motion.h1 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-5xl font-extrabold mb-4"
+                >
+                    Tell us your preferences
+                </motion.h1>
+                <p className="text-lg text-gray-200 font-semibold">
+                    Provide basic details, and our AI trip planner will create a customized itinerary for you.
+                </p>
             </div>
 
             {/* Destination Search */}
-            <div className='mt-8 w-full max-w-lg'>
-                <h2 className='mb-3 text-lg font-semibold text-gray-700'>Where do you want to go?</h2>
+            <div className="mt-10 w-full max-w-lg">
+                <h2 className="mb-3 text-lg font-semibold text-white">Where do you want to go?</h2>
                 <LocationSearch onChange={(value) => handleInputChange('Selected Location', value)} />
             </div>
 
             {/* Trip Duration */}
-            <div className='mt-6 w-full max-w-lg'>
-                <h2 className='mb-3 text-lg font-semibold text-gray-700'>How many days?</h2>
+            <div className="mt-6 w-full max-w-lg">
+                <h2 className="mb-3 text-lg font-semibold text-white">How many days?</h2>
                 <input 
                     type="number" 
-                    placeholder='Ex. 3' 
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="Ex. 3" 
+                    className="w-full p-3 bg-gray-800/40 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-400 outline-none transition-all"
                     onChange={(e) => handleInputChange('No of Days: ', e.target.value)}
                 />
             </div>
 
             {/* Budget Selection */}
-            <div className='mt-6 w-full max-w-lg'>
-                <h2 className='mb-3 text-lg font-semibold text-gray-700'>Select your budget</h2>
-                <div className='flex flex-wrap gap-4'>
+            <div className="mt-6 w-full max-w-lg">
+                <h2 className="mb-3 text-lg font-semibold text-white">Select your budget</h2>
+                <div className="flex flex-wrap gap-4">
                     {SelectBudget.map((item, index) => (
                         <div 
                             key={index} 
-                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-md p-2 
+                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-lg p-2 
                                 cursor-pointer transition-all duration-300 
-                                hover:shadow-md hover:border-gray-500
-                                ${formData?.budget === item.budget ? 'border-blue-500 shadow-lg scale-105' : 'border-gray-300'}`}                            
+                                hover:shadow-lg hover:border-blue-400 
+                                ${formData?.budget === item.budget ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
                             onClick={() => handleInputChange('budget', item.budget)}
                         >
-                            <div className="text-red-500">{item.icon}</div>
-                            <h3 className='text-sm font-semibold mt-2'>{item.budget}</h3>
-                            <p className='text-xs text-gray-600'>{item.amount}</p>
+                            <div className="text-blue-400 text-2xl">{item.icon}</div>
+                            <h3 className="text-sm font-semibold mt-2 text-cyan-300">{item.budget}</h3>
+                            <p className="text-xs text-gray-300">{item.amount}</p>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Member Selection */}
-            <div className='mt-6 w-full max-w-lg'>
-                <h2 className='mb-3 text-lg font-semibold text-gray-700'>
-                    Who do you plan on traveling for your next journey?
+            <div className="mt-6 w-full max-w-lg">
+                <h2 className="mb-3 text-lg font-semibold text-white">
+                    Who do you plan to travel with?
                 </h2>
-                <div className='flex flex-wrap gap-4'>
+                <div className="flex flex-wrap gap-4">
                     {SelectMembers.map((item, index) => (
                         <div 
                             key={index} 
-                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-md p-2 
+                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-lg p-2 
                                 cursor-pointer transition-all duration-300 
-                                hover:shadow-md hover:border-gray-500
-                                ${formData?.["Traveling with: "] === item.people ? 'border-blue-500 shadow-lg scale-105' : 'border-gray-300'}`}
+                                hover:shadow-lg hover:border-blue-400 
+                                ${formData?.["Traveling with: "] === item.people ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
                             onClick={() => handleInputChange("Traveling with: ", item.people)}
                         >
-                            <div className="text-red-500">{item.icon}</div>
-                            <h3 className='text-sm font-semibold mt-2'>{item.people}</h3>
-                            <p className='text-xs text-gray-600'>{item.amount}</p>
+                            <div className="text-blue-400 text-2xl">{item.icon}</div>
+                            <h3 className="text-sm font-semibold mt-2 text-cyan-300">{item.people}</h3>
+                            <p className="text-xs text-gray-300">{item.amount}</p>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Generate Button */}
-            <div className='mt-6 w-full max-w-lg flex justify-end'>
-                <Button onClick={generateTrip}>Generate Trip</Button>
+            <div className="mt-10 w-full max-w-lg flex justify-center items-center">
+                <Button 
+                    onClick={generateTrip}
+                    className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg"
+                >
+                    Generate Trip ✈️
+                </Button>
             </div>
+
 
             {/* Dialog Box */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogContent>
-                    <DialogTitle>
-                        <img src="./Logo.svg" alt="Logo" />
+                <DialogContent className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
+                    <DialogTitle className=''>
+                        <h1 className="text-3xl font-bold text-white">
+                            Trip<span className="text-cyan-400">Planner</span>
+                        </h1>
                     </DialogTitle>
                     <DialogContentText>
-                        <h1>Continue Google</h1>
-                        <p>Sign in to the App with google authentication securely</p>
+                        <h1 className='text-white'>Continue with Google</h1>
+                        <p className='text-white'>Sign in to the App with google authentication securely</p>
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                <DialogActions className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
+                    <Button onClick={() => setOpenDialog(false)} className="bg-red-600 hover:bg-red-500 text-white">Cancel</Button>
                     <Button onClick={() => {
                         login();
                         setOpenDialog(false);

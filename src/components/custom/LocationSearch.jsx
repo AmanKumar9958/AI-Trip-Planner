@@ -66,10 +66,10 @@ const LocationSearch = ({onChange}) => {
         value={query}
         onChange={handleInputChange}
         placeholder="Enter a location..."
-        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full p-3 border border-gray-300 rounded-md text-white focus:ring-2 focus:ring-blue-500 outline-none"
       />
       {suggestions.length > 0 && (
-        <ul className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg max-h-60 overflow-auto">
+        <ul className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg max-h-60 overflow-auto z-50">
           {suggestions.map((location, index) => (
             <li
               key={`${location.place_id}-${index}`} // Ensure unique keys

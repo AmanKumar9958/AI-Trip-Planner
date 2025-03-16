@@ -1,44 +1,64 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const Hero = () => {
     return (
-        <div className="max-w-full min-h-screen flex flex-col items-center justify-center p-6">
-            {/* Heading */}
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="max-w-full min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e]"
+        >
             <div className="text-center">
-                <h1 className="text-red-500 text-5xl font-bold text-center">
-                    Discover Your Next Adventure with AI:
-                </h1>
-                <h1 className="text-5xl font-bold text-center">
-                    Personalized Itineraries At Your Fingertips
-                </h1>
+                <motion.h1 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-6xl font-extrabold mb-4"
+                >
+                    Explore The World with AI
+                </motion.h1>
+                <motion.h2 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-4xl font-bold text-white mb-8"
+                >
+                    Your Personalized Itinerary Awaits
+                </motion.h2>
             </div>
 
-            {/* Description */}
-            <div className="mt-6 text-center max-w-2xl">
-                <p className="text-lg font-semibold">
-                    Your personalized trip planner and travel curator, creating custom itineraries tailored to your interests and budget.
-                </p>
-            </div>
+            <motion.p 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-6 text-center max-w-2xl text-lg text-gray-300 mb-12"
+            >
+                AI-powered travel planner that tailors trips based on your interests, budget, and travel style.
+            </motion.p>
 
-            {/* CTA Button */}
-            <div className="mt-8">
+            <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 120 }}
+            >
                 <Link to={'/plantrip'}>
-                    <Button className="px-6 py-3 text-lg cursor-pointer">Get Started</Button>
+                    <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:scale-105 text-white px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg">
+                        Start Planning Now →
+                    </Button>
                 </Link>
-            </div>
+            </motion.div>
 
-            {/* Image with Fixed Size */}
-            <div className="mt-8">
+            <motion.div className="mt-16 opacity-100 scale-100">
                 <img 
-                    src="https://plus.unsplash.com/premium_photo-1738854511313-799f13b4d3ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                    alt="Travel AI" 
-                    className="rounded-lg shadow-md w-[40vw] h-[50vh] object-cover"
+                    src="https://images.unsplash.com/photo-1557652696-0fd8a35b0d62?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+                    alt="Travel AI"
+                    className="rounded-xl shadow-lg w-full max-w-[50vw] h-auto object-cover sm:max-w-[70vw] sm:h-[30vh]"
                 />
-            </div>
-        </div>
+            </motion.div>
+
+        </motion.div>
     );
 };
-
 export default Hero;

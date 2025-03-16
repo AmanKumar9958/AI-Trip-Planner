@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
-import Signup from './Page/Signup.jsx';
 import PlanTrip from './Page/PlanTrip.jsx';
 import Header from './components/custom/Header.jsx';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -17,15 +16,6 @@ const router=createBrowserRouter(
         <>
           <Header />
           <App />
-        </>
-      )
-    },
-    {
-      path: '/signup',
-      element: (
-        <>
-          <Header />
-          <Signup />
         </>
       )
     },
