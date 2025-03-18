@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+import { AuthContext } from "../../Context/AuthContext";
 
 const Hero = () => {
+    const { user, loginUser } = useContext(AuthContext);
+
+    const login = useGoogleLogin({
+        onSuccess: async (response) => {
+            await getUser(response);
+        },
+        onError: (error) => console.log("Login Error:", error)
+    });
+
+    const getUser = async (userInfo) => {
+        try {
+            const response = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userInfo.access_token}`, {
+                headers: {
+                    Authorization: `Bearer ${userInfo.access_token}`,
+                    Accept: 'application/json'
+                }
+            });
+            loginUser(response.data);
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+
     return (
         <motion.div 
             initial={{ opacity: 0 }}
@@ -43,11 +69,17 @@ const Hero = () => {
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 120 }}
             >
-                <Link to={'/plantrip'}>
-                    <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:scale-105 text-white px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg">
+                {user ? (
+                    <Link to={'/plantrip'}>
+                        <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 text-white px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg">
+                            Start Planning Now →
+                        </Button>
+                    </Link>
+                ) : (
+                    <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 text-white px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg" onClick={login}>
                         Start Planning Now →
                     </Button>
-                </Link>
+                )}
             </motion.div>
 
             <motion.div className="mt-16 opacity-100 scale-100">
@@ -61,4 +93,5 @@ const Hero = () => {
         </motion.div>
     );
 };
+
 export default Hero;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import LocationSearch from '../components/custom/LocationSearch';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
@@ -13,10 +13,12 @@ import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { AuthContext } from '../Context/AuthContext';
 
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
+    const { user, loginUser } = useContext(AuthContext);
 
     const handleInputChange = (name, value) => {
         setFormData((prev) => ({
@@ -25,11 +27,6 @@ const PlanTrip = () => {
         }));
     };    
 
-    useEffect(() => {
-    }, [formData])
-
-
-    // Login..
     const login = useGoogleLogin({
         onSuccess: (response) => {
             getUser(response);
@@ -45,15 +42,13 @@ const PlanTrip = () => {
             }
         })
         .then((response) => {
-            localStorage.setItem('user', JSON.stringify(response.data));
+            loginUser(response.data);
         })
         .catch((error) => {
             console.error("Error fetching user data:", error);
         });
     };
-    
 
-    // Generating Trip..
     const generateTrip = async () => {
         if(!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
@@ -70,10 +65,8 @@ const PlanTrip = () => {
         .replace('{budget}', formData?.budget)
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
-        console.log(result.response.text())     // displaying the result in the console..
+        console.log(result.response.text())
         toast.success("Trip generated successfully 🎉");
-
-        const user = localStorage.getItem('user');
 
         if(!user){
             toast.error("No user Found!!");
@@ -168,7 +161,6 @@ const PlanTrip = () => {
                     Generate Trip ✈️
                 </Button>
             </div>
-
 
             {/* Dialog Box */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
