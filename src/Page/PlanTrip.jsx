@@ -14,11 +14,13 @@ import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../Context/AuthContext';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
     const { user, loginUser } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (name, value) => {
         setFormData((prev) => ({
@@ -53,10 +55,13 @@ const PlanTrip = () => {
         if(!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
             !formData?.budget ){
-            toast.error("Please fill all the details correctly.");
+            toast.error("Please fill all the details correctly.", {
+                style: { backgroundColor: "#FF4C4C", color: "white" }, // Custom red background with white text
+            });
             return;
         }
         toast.success("Generating Trip, please wait 🙏");
+        setLoading(true);
 
         const FINAL_PROMPT = AI_PROMPT
         .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
@@ -66,7 +71,11 @@ const PlanTrip = () => {
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
         console.log(result.response.text())
-        toast.success("Trip generated successfully 🎉");
+        toast.success("Trip generated successfully 🎉", {
+            style: { backgroundColor: "#4CAF50", color: "white" }, // Green background
+        });
+
+        setLoading(false);
 
         if(!user){
             toast.error("No user Found!!");
@@ -155,10 +164,11 @@ const PlanTrip = () => {
             {/* Generate Button */}
             <div className="mt-10 w-full max-w-lg flex justify-center items-center">
                 <Button 
+                    disable={loading}
                     onClick={generateTrip}
                     className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg"
                 >
-                    Generate Trip ✈️
+                    {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
                 </Button>
             </div>
 
