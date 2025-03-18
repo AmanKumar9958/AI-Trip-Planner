@@ -40,7 +40,7 @@ const Header = () => {
             className='flex items-center justify-between px-8 py-4 bg-gradient-to-r from-[#141e30] to-[#243b55] shadow-md'
         >
             <Link to={'/'} className="text-3xl font-bold text-white">
-                Trip<span className="text-cyan-400">Planner</span>
+                Trip<span className="text-cyan-400">Genius</span>
             </Link>
 
             {user ? (
