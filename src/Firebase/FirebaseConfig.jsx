@@ -1,11 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFireStore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from "firebase/firestore"; // Fix: 'getFireStore' -> 'getFirestore'
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// TODO: Add SDKs for Firebase products that you want to use
 const firebaseConfig = {
     apiKey: "AIzaSyBA4B04rVhvA3l98oRoO2PeFGCqf-VGRhk",
     authDomain: "ai-trip-genius.firebaseapp.com",
@@ -18,4 +15,4 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const db = getFireStore(app);
+export const db = getFirestore(app); // Fix applied

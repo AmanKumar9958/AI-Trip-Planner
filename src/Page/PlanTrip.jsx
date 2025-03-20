@@ -15,6 +15,8 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../Context/AuthContext';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from '../Firebase/FirebaseConfig';
 
 // Floating travel icons
 const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
@@ -32,6 +34,7 @@ const PlanTrip = () => {
         }));
     };
 
+    // login..
     const login = useGoogleLogin({
         onSuccess: (response) => {
             getUser(response);
@@ -39,6 +42,7 @@ const PlanTrip = () => {
         onError: (error) => console.log("Login Error:", error)
     });
 
+    // fetching user details..
     const getUser = (userInfo) => {
         axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userInfo.access_token}`, {
             headers: {
@@ -54,6 +58,7 @@ const PlanTrip = () => {
         });
     };
 
+    // generate trip..
     const generateTrip = async () => {
         if (!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
@@ -74,6 +79,7 @@ const PlanTrip = () => {
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
         console.log(result.response.text());
+        saveTripData(result.response.text());
         toast.success("Trip generated successfully 🎉", {
             style: { backgroundColor: "#4CAF50", color: "white" },
         });
@@ -86,6 +92,20 @@ const PlanTrip = () => {
             return;
         }
     };
+
+    // save trip details to firebase..
+    const saveTripData = async (TripData) => {
+        const docID = Date.now().toString();
+        const users = JSON.parse(localStorage.getItem('user'));
+
+        await setDoc(doc(db, "AI Trips", docID), {
+        userSelection: formData,
+        tripData: JSON.parse(TripData),
+        userEmailID: users.email,
+        id: docID,
+        });
+    }
+
 
     return (
         <div className="relative w-full min-h-screen px-6 py-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center overflow-hidden">
