@@ -16,6 +16,9 @@ import { motion } from 'framer-motion';
 import { AuthContext } from '../Context/AuthContext';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
+// Floating travel icons
+const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
+
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
@@ -27,7 +30,7 @@ const PlanTrip = () => {
             ...prev,
             [name]: value
         }));
-    };    
+    };
 
     const login = useGoogleLogin({
         onSuccess: (response) => {
@@ -35,7 +38,7 @@ const PlanTrip = () => {
         },
         onError: (error) => console.log("Login Error:", error)
     });
-    
+
     const getUser = (userInfo) => {
         axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userInfo.access_token}`, {
             headers: {
@@ -52,11 +55,11 @@ const PlanTrip = () => {
     };
 
     const generateTrip = async () => {
-        if(!formData?.["Traveling with: "] ||
+        if (!formData?.["Traveling with: "] ||
             !formData?.["No of Days: "] ||
-            !formData?.budget ){
+            !formData?.budget) {
             toast.error("Please fill all the details correctly.", {
-                style: { backgroundColor: "#FF4C4C", color: "white" }, // Custom red background with white text
+                style: { backgroundColor: "#FF4C4C", color: "white" },
             });
             return;
         }
@@ -64,30 +67,55 @@ const PlanTrip = () => {
         setLoading(true);
 
         const FINAL_PROMPT = AI_PROMPT
-        .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
-        .replace('{totalDays}', formData?.["No of Days: "])
-        .replace('{traveler}', formData?.["Traveling with: "])
-        .replace('{budget}', formData?.budget)
+            .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
+            .replace('{totalDays}', formData?.["No of Days: "])
+            .replace('{traveler}', formData?.["Traveling with: "])
+            .replace('{budget}', formData?.budget);
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
-        console.log(result.response.text())
+        console.log(result.response.text());
         toast.success("Trip generated successfully 🎉", {
-            style: { backgroundColor: "#4CAF50", color: "white" }, // Green background
+            style: { backgroundColor: "#4CAF50", color: "white" },
         });
 
         setLoading(false);
 
-        if(!user){
+        if (!user) {
             toast.error("No user Found!!");
             setOpenDialog(true);
             return;
         }
-    }
+    };
 
     return (
-        <div className='w-full min-h-screen px-6 py-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center'>
+        <div className="relative w-full min-h-screen px-6 py-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center overflow-hidden">
+            
+            {/* Floating Travel Icons */}
+            {floatingIcons.map((icon, index) => (
+                <motion.span
+                    key={index}
+                    className="absolute text-4xl opacity-50"
+                    style={{
+                        top: `${Math.random() * 100}vh`,
+                        left: `${Math.random() * 100}vw`,
+                    }}
+                    animate={{
+                        y: [-10, 10, -10],
+                        rotate: [0, 10, -10, 0],
+                    }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: Math.random() * 2
+                    }}
+                >
+                    {icon}
+                </motion.span>
+            ))}
+
             {/* Header Section */}
-            <div className="text-center max-w-2xl">
+            <div className="text-center max-w-2xl relative z-10">
                 <motion.h1 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -163,26 +191,31 @@ const PlanTrip = () => {
 
             {/* Generate Button */}
             <div className="mt-10 w-full max-w-lg flex justify-center items-center">
-                <Button 
-                    disable={loading}
-                    onClick={generateTrip}
-                    className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg"
+                <motion.div 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
-                </Button>
+                    <Button 
+                        disable={loading}
+                        onClick={generateTrip}
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
+                    >
+                        {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
+                    </Button>
+                </motion.div>
             </div>
 
             {/* Dialog Box */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogContent className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
-                    <DialogTitle className=''>
+                    <DialogTitle>
                         <h1 className="text-3xl font-bold text-white">
                             Trip<span className="text-cyan-400">Planner</span>
                         </h1>
                     </DialogTitle>
                     <DialogContentText>
                         <h1 className='text-white'>Continue with Google</h1>
-                        <p className='text-white'>Sign in to the App with google authentication securely</p>
+                        <p className='text-white'>Sign in to the App with Google authentication securely</p>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
