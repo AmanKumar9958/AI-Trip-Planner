@@ -17,6 +17,7 @@ import { AuthContext } from '../Context/AuthContext';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from '../Firebase/FirebaseConfig';
+import { useNavigate } from 'react-router';
 
 // Floating travel icons
 const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
@@ -33,6 +34,9 @@ const PlanTrip = () => {
             [name]: value
         }));
     };
+
+    // redirect to the view trip page with dynamic routing..
+    const navigate = useNavigate();
 
     // login..
     const login = useGoogleLogin({
@@ -78,8 +82,7 @@ const PlanTrip = () => {
             .replace('{budget}', formData?.budget);
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
-        console.log(result.response.text());
-        saveTripData(result.response.text());
+        saveTripData(result.response.text());   // saving data in firebase..
         toast.success("Trip generated successfully 🎉", {
             style: { backgroundColor: "#4CAF50", color: "white" },
         });
@@ -104,6 +107,7 @@ const PlanTrip = () => {
         userEmailID: users.email,
         id: docID,
         });
+        navigate('/viewtrip/' + docID)
     }
 
 
