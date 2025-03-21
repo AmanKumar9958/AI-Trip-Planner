@@ -5,6 +5,7 @@ import { db } from '../../Firebase/FirebaseConfig';
 import { toast } from 'sonner';
 import InfoSec from '../../components/custom/InfoSec';
 import Hotel from '../../components/custom/Hotel';
+import VisitingPlaces from '../../components/custom/VisitingPlaces';
 
 const ViewTrip = () => {
     const { tripid } = useParams();
@@ -41,8 +42,7 @@ const ViewTrip = () => {
             <Hotel trip={trip} />
 
             {/* Daily Plan */}
-
-            {/* Footer */}
+            <VisitingPlaces trip={trip}/>
         </div>
     );
 };
