@@ -64,8 +64,8 @@ const PlanTrip = () => {
 
     // generate trip..
     const generateTrip = async () => {
-        if (!formData?.["Traveling with: "] ||
-            !formData?.["No of Days: "] ||
+        if (!formData?.["TravelingWith"] ||
+            !formData?.["TotalDays"] ||
             !formData?.budget) {
             toast.error("Please fill all the details correctly.", {
                 style: { backgroundColor: "#FF4C4C", color: "white" },
@@ -76,12 +76,13 @@ const PlanTrip = () => {
         setLoading(true);
 
         const FINAL_PROMPT = AI_PROMPT
-            .replace('{location}', formData?.['Selected Location'] || "Unknown Location")
-            .replace('{totalDays}', formData?.["No of Days: "])
-            .replace('{traveler}', formData?.["Traveling with: "])
+            .replace('{location}', formData?.['Location'] || "Unknown Location")
+            .replace('{totalDays}', formData?.["TotalDays"])
+            .replace('{traveler}', formData?.["TravelingWith"])
             .replace('{budget}', formData?.budget);
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
+        console.log(result.response.text());    // temporary console log..
         saveTripData(result.response.text());   // saving data in firebase..
         toast.success("Trip generated successfully 🎉", {
             style: { backgroundColor: "#4CAF50", color: "white" },
@@ -155,7 +156,7 @@ const PlanTrip = () => {
             {/* Destination Search */}
             <div className="mt-10 w-full max-w-lg">
                 <h2 className="mb-3 text-lg font-semibold text-white">Where do you want to go?</h2>
-                <LocationSearch onChange={(value) => handleInputChange('Selected Location', value)} />
+                <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
             </div>
 
             {/* Trip Duration */}
@@ -165,7 +166,7 @@ const PlanTrip = () => {
                     type="number" 
                     placeholder="Ex. 3" 
                     className="w-full p-3 bg-gray-800/40 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-                    onChange={(e) => handleInputChange('No of Days: ', e.target.value)}
+                    onChange={(e) => handleInputChange('TotalDays', e.target.value)}
                 />
             </div>
 
@@ -202,8 +203,8 @@ const PlanTrip = () => {
                             className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-lg p-2 
                                 cursor-pointer transition-all duration-300 
                                 hover:shadow-lg hover:border-blue-400 
-                                ${formData?.["Traveling with: "] === item.people ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
-                            onClick={() => handleInputChange("Traveling with: ", item.people)}
+                                ${formData?.["TravelingWith"] === item.people ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
+                            onClick={() => handleInputChange("TravelingWith", item.people)}
                         >
                             <div className="text-blue-400 text-2xl">{item.icon}</div>
                             <h3 className="text-sm font-semibold mt-2 text-cyan-300">{item.people}</h3>
