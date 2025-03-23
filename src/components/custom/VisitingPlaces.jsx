@@ -3,11 +3,14 @@ import { FaMap, FaClock } from "react-icons/fa6";
 import { IoTicketSharp } from "react-icons/io5";
 
 const VisitingPlaces = ({ trip }) => {
-    if (!trip || !trip.userSelection) {
+    // Check if trip data exists and is correctly structured
+    if (!trip || !trip.tripData || !trip.tripData.tripData) {
         return <p className='text-gray-600 text-center mt-5'>Loading Your Daily Trip Plan...</p>;
     }
 
-    if (!trip.tripData || !trip.tripData.Itinerary || !Array.isArray(trip.tripData.Itinerary)) {
+    const itinerary = trip.tripData.tripData.Itinerary;
+
+    if (!itinerary || !Array.isArray(itinerary)) {
         return <p className='text-gray-600 text-center mt-5'>No trip data available.</p>;
     }
 
@@ -20,10 +23,10 @@ const VisitingPlaces = ({ trip }) => {
         }, {});
     };
 
-    const groupedItinerary = groupByDay(trip.tripData.Itinerary);
+    const groupedItinerary = groupByDay(itinerary);
 
-    const openGoogleMaps = (geoCoordinates) => {
-        const mapUrl = `https://www.google.com/maps?q=${geoCoordinates}`;
+    const openGoogleMaps = (placeName) => {
+        const mapUrl = `https://www.google.com/maps?q=${placeName}`;
         window.open(mapUrl, '_blank');
     };
 
@@ -42,17 +45,8 @@ const VisitingPlaces = ({ trip }) => {
                                 <div 
                                     key={placeIndex} 
                                     className='border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer'
-                                    onClick={() => openGoogleMaps(place.GeoCoordinates)}
+                                    onClick={() => openGoogleMaps(place.PlaceName)}
                                 >
-                                    {/* Place Image */}
-                                    {place.PlaceImageURL && (
-                                        <img 
-                                            src={place.PlaceImageURL} 
-                                            alt={place.PlaceName} 
-                                            className='w-full h-40 object-cover rounded-md mb-3'
-                                        />
-                                    )}
-
                                     {/* Place Name */}
                                     <p className='font-semibold text-xl text-gray-800'>{place.PlaceName}</p>
 
