@@ -24,12 +24,12 @@ const ViewTrip = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
             setTrip(docSnap.data());
             toast.success("Trip found!");
         } else {
-            console.log("No such document!");
-            toast.error("No trip found!");
+            toast.error("No Trip Found", {
+                style: { backgroundColor: "#FF4C4C", color: "white" },
+            });
         }
     };
 

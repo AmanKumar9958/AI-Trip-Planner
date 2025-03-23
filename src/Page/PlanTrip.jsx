@@ -64,36 +64,40 @@ const PlanTrip = () => {
 
     // generate trip..
     const generateTrip = async () => {
-        if (!formData?.["TravelingWith"] ||
-            !formData?.["TotalDays"] ||
-            !formData?.budget) {
-            toast.error("Please fill all the details correctly.", {
-                style: { backgroundColor: "#FF4C4C", color: "white" },
+        if(user){
+            if (!formData?.["TravelingWith"] ||
+                !formData?.["TotalDays"] ||
+                !formData?.budget) {
+                toast.error("Please fill all the details correctly.", {
+                    style: { backgroundColor: "#FF4C4C", color: "white" },
+                });
+                return;
+            }
+            toast.success("Generating Trip, please wait 🙏");
+            setLoading(true);
+    
+            const FINAL_PROMPT = AI_PROMPT
+                .replace('{location}', formData?.['Location'] || "Unknown Location")
+                .replace('{totalDays}', formData?.["TotalDays"])
+                .replace('{traveler}', formData?.["TravelingWith"])
+                .replace('{budget}', formData?.budget);
+    
+            const result = await chatSession.sendMessage(FINAL_PROMPT);
+            console.log(result.response.text());    // temporary console log..
+            saveTripData(result.response.text());   // saving data in firebase..
+            toast.success("Trip generated successfully 🎉", {
+                style: { backgroundColor: "#4CAF50", color: "white" },
             });
-            return;
-        }
-        toast.success("Generating Trip, please wait 🙏");
-        setLoading(true);
-
-        const FINAL_PROMPT = AI_PROMPT
-            .replace('{location}', formData?.['Location'] || "Unknown Location")
-            .replace('{totalDays}', formData?.["TotalDays"])
-            .replace('{traveler}', formData?.["TravelingWith"])
-            .replace('{budget}', formData?.budget);
-
-        const result = await chatSession.sendMessage(FINAL_PROMPT);
-        console.log(result.response.text());    // temporary console log..
-        saveTripData(result.response.text());   // saving data in firebase..
-        toast.success("Trip generated successfully 🎉", {
-            style: { backgroundColor: "#4CAF50", color: "white" },
-        });
-
-        setLoading(false);
-
-        if (!user) {
-            toast.error("No user Found!!");
-            setOpenDialog(true);
-            return;
+    
+            setLoading(false);
+    
+            if (!user) {
+                toast.error("No user Found!!");
+                setOpenDialog(true);
+                return;
+            }
+        } else{
+            navigate('/')
         }
     };
 
@@ -214,20 +218,23 @@ const PlanTrip = () => {
                 </div>
             </div>
 
-            {/* Generate Button */}
-            <div className="mt-10 w-full max-w-lg flex justify-center items-center">
-                <motion.div 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <Button 
-                        disable={loading}
-                        onClick={generateTrip}
-                        className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
+            <div className='w-full max-w-lg flex items-center gap-4'>
+
+                {/* Generate Button */}
+                <div className="mt-10 w-full max-w-lg flex justify-center items-center">
+                    <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
                     >
-                        {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
-                    </Button>
-                </motion.div>
+                        <Button 
+                            disable={loading}
+                            onClick={generateTrip}
+                            className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
+                        >
+                            {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
+                        </Button>
+                    </motion.div>
+                </div>
             </div>
 
             {/* Dialog Box */}

@@ -22,7 +22,6 @@ const InfoSec = ({trip}) => {
                 <div className='flex items-center justify-between py-2'>
                     <div className='flex flex-col'>
                         <h2 className='font-bold text-2xl flex items-center gap-2'><FaLocationDot /> {trip.userSelection.Location}</h2>
-                        <h2 className='font-semibold text-lg flex items-center gap-2'>🌦️ {trip.tripData.BestTimeToVisit}</h2>
                     </div>
                     {/* Share Button */}
                     <div className='flex justify-end'>

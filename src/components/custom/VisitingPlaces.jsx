@@ -7,37 +7,76 @@ const VisitingPlaces = ({ trip }) => {
         return <p className='text-gray-600 text-center mt-5'>Loading Your Daily Trip Plan...</p>;
     }
 
-    // Function to open Google Maps with coordinates
-    const openGoogleMaps = (PlaceName) => {
-        const mapUrl = `https://www.google.com/maps?q=${PlaceName}`;
+    if (!trip.tripData || !trip.tripData.Itinerary || !Array.isArray(trip.tripData.Itinerary)) {
+        return <p className='text-gray-600 text-center mt-5'>No trip data available.</p>;
+    }
+
+    // Grouping places by Day
+    const groupByDay = (itinerary) => {
+        return itinerary.reduce((acc, place) => {
+            acc[place.Day] = acc[place.Day] || [];
+            acc[place.Day].push(place);
+            return acc;
+        }, {});
+    };
+
+    const groupedItinerary = groupByDay(trip.tripData.Itinerary);
+
+    const openGoogleMaps = (geoCoordinates) => {
+        const mapUrl = `https://www.google.com/maps?q=${geoCoordinates}`;
         window.open(mapUrl, '_blank');
     };
 
     return (
         <div className='mt-10'>
             <h2 className='font-bold text-2xl flex items-center gap-2 mb-4'>
-                <FaMap className='text-blue-500' /> Places to Visit
+                <FaMap className='text-blue-500' /> Your Itinerary
             </h2>
 
             <div className='space-y-6 cursor-default'>
-                {trip.tripData.Itinerary.map((day, dayIndex) => (
-                    <div key={dayIndex} className='bg-gray-100 p-4 rounded-lg shadow-md'>
-                        <p className='font-bold text-lg text-blue-600'>{day.Day}</p>
+                {Object.keys(groupedItinerary).map((day, index) => (
+                    <div key={index} className='bg-gray-100 p-4 rounded-lg shadow-md'>
+                        <p className='font-bold text-lg text-blue-600'>{day}</p>
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2'>
-                            {day.Places.map((place, placeIndex) => (
+                            {groupedItinerary[day].map((place, placeIndex) => (
                                 <div 
                                     key={placeIndex} 
                                     className='border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer'
-                                    onClick={() => openGoogleMaps(place.PlaceName)} // Open Google Maps
+                                    onClick={() => openGoogleMaps(place.GeoCoordinates)}
                                 >
+                                    {/* Place Image */}
+                                    {place.PlaceImageURL && (
+                                        <img 
+                                            src={place.PlaceImageURL} 
+                                            alt={place.PlaceName} 
+                                            className='w-full h-40 object-cover rounded-md mb-3'
+                                        />
+                                    )}
+
+                                    {/* Place Name */}
                                     <p className='font-semibold text-xl text-gray-800'>{place.PlaceName}</p>
+
+                                    {/* Place Details */}
                                     <p className='text-gray-600 mt-2'>{place.PlaceDetails}</p>
+
+                                    {/* Best Time to Visit */}
                                     <p className='text-gray-600 mt-2 flex items-center gap-2'>
-                                        <span className='font-semibold text-black'><IoTicketSharp /> </span> {place.TicketPricing}
+                                        <FaClock className='text-gray-500' /> Best Time: {place.BestTimeToVisit || 'N/A'}
                                     </p>
-                                    <p className='text-gray-600 mt-2 flex items-center gap-2'>
-                                        <span className='font-semibold text-black'><FaClock /> </span> {place.TravelTime}
-                                    </p>
+
+                                    {/* Ticket Pricing (if available) */}
+                                    {place.TicketPricing && (
+                                        <p className='text-gray-600 mt-2 flex items-center gap-2'>
+                                            <IoTicketSharp className='text-gray-500' /> {place.TicketPricing}
+                                        </p>
+                                    )}
+
+                                    {/* Travel Time (if available) */}
+                                    {place.TravelTime && (
+                                        <p className='text-gray-600 mt-2 flex items-center gap-2'>
+                                            <FaClock className='text-gray-500' /> {place.TravelTime}
+                                        </p>
+                                    )}
                                 </div>
                             ))}
                         </div>
