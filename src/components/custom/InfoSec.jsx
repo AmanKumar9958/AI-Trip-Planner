@@ -15,9 +15,8 @@ const InfoSec = ({trip}) => {
             <img 
                 src="/BG_Image_2.png"
                 alt="Island"
-                className='w-4/5 m-auto h-[400px] object-fill rounded-xl' 
+                className='w-full sm:w-4/5 m-auto h-[250px] sm:h-[400px] object-cover rounded-xl'
             />
-
 
             {/* Trip Information */}
             <div className='flex gap-4 flex-col mt-4'>
