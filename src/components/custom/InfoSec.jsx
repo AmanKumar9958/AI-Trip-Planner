@@ -12,10 +12,12 @@ const InfoSec = ({trip}) => {
     return (
         <div>
             {/* Image */}
-            <img src="https://media.istockphoto.com/id/1466478193/photo/uninhabited-island.jpg?s=612x612&w=is&k=20&c=EtW44Bb-Lx5cpEgtS51jrADOstfVODKi8noKbPAyYBQ="
-            alt="Island"
-            className='w-full h-[340px] object-cover rounded-xl'
+            <img 
+                src="/BG_Image_2.png"
+                alt="Island"
+                className='w-4/5 m-auto h-[400px] object-fill rounded-xl' 
             />
+
 
             {/* Trip Information */}
             <div className='flex gap-4 flex-col mt-4'>
