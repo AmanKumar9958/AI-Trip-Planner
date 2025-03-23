@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/viewtrip/:tripid',
+    path: '/trip/:tripid',
     element: (
       <>
         <Header />
