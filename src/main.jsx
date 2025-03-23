@@ -8,8 +8,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from 'sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './Context/AuthContext.jsx';
-import ViewTrip from './Page/viewTrip/ViewTrip.jsx';
 import AllTrips from './Page/AllTrips.jsx';
+import viewTrip from './Page/viewTrip/viewTrip.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Header />
-        <ViewTrip />
+        <ViewTrip />  
       </>
     ),
   },

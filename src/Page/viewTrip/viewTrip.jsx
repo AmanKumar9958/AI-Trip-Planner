@@ -1,3 +1,4 @@
+import React from 'react'
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom'; // use react-router-dom instead of react-router
@@ -7,7 +8,7 @@ import InfoSec from '../../components/custom/InfoSec';
 import Hotel from '../../components/custom/Hotel';
 import VisitingPlaces from '../../components/custom/VisitingPlaces';
 
-const ViewTrip = () => {
+const viewTrip = () => {
     const { tripid } = useParams();
     const fetched = useRef(false); // Prevent duplicate calls
     const [trip, setTrip] = useState(null);
@@ -31,8 +32,7 @@ const ViewTrip = () => {
                 style: { backgroundColor: "#FF4C4C", color: "white" },
             });
         }
-    };
-
+    }
     return (
         <div className='p-10 md:px-14 lg:px-40 xl:px-56'>
             {/* Information Section */}
@@ -44,7 +44,7 @@ const ViewTrip = () => {
             {/* Daily Plan */}
             <VisitingPlaces trip={trip}/>
         </div>
-    );
-};
+    )
+}
 
-export default ViewTrip;
+export default viewTrip
