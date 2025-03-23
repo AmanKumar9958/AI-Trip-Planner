@@ -9,7 +9,7 @@ import { Toaster } from 'sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './Context/AuthContext.jsx';
 import AllTrips from './Page/AllTrips.jsx';
-import viewTrip from './Page/viewTrip/viewTrip.jsx';
+import ViewTrip from './Page/viewTrip/ViewTrip.jsx';
 
 const router = createBrowserRouter([
   {

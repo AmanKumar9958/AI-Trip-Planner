@@ -1,6 +1,5 @@
-import React from 'react'
-import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
 import { useParams } from 'react-router-dom'; // use react-router-dom instead of react-router
 import { db } from '../../Firebase/FirebaseConfig';
 import { toast } from 'sonner';
@@ -8,7 +7,7 @@ import InfoSec from '../../components/custom/InfoSec';
 import Hotel from '../../components/custom/Hotel';
 import VisitingPlaces from '../../components/custom/VisitingPlaces';
 
-const viewTrip = () => {
+const ViewTrip = () => {
     const { tripid } = useParams();
     const fetched = useRef(false); // Prevent duplicate calls
     const [trip, setTrip] = useState(null);
@@ -47,4 +46,4 @@ const viewTrip = () => {
     )
 }
 
-export default viewTrip
+export default ViewTrip
