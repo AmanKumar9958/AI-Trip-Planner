@@ -7,7 +7,7 @@ import InfoSec from '../../components/custom/InfoSec';
 import Hotel from '../../components/custom/Hotel';
 import VisitingPlaces from '../../components/custom/VisitingPlaces';
 
-const ViewTrip = () => {
+const Trip = () => {
     const { tripid } = useParams();
     const fetched = useRef(false); // Prevent duplicate calls
     const [trip, setTrip] = useState(null);
@@ -46,4 +46,4 @@ const ViewTrip = () => {
     )
 }
 
-export default ViewTrip
+export default Trip
