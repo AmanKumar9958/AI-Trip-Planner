@@ -12,32 +12,41 @@ const Hotel = ({ trip }) => {
     };
 
     return (
-        <div className='flex gap-4 flex-wrap mt-4'>
-            {Array.isArray(trip.tripData?.tripData?.HotelOptions) && trip.tripData.tripData.HotelOptions.length > 0 ? (
-                trip.tripData.tripData.HotelOptions.map((item, index) => (
-                    <div 
-                        key={index} 
-                        className='flex flex-col border border-gray-300 p-4 rounded-lg w-[300px] shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 cursor-pointer m-auto'
-                        onClick={() => openGoogleMaps(item.HotelName, item.HotelAddress)}
-                    >
-                        <div className="mt-3 m-auto">
-                            <p className='font-bold text-lg'>{item.HotelName}</p>
-                            <p className='text-sm text-gray-600 flex items-center gap-2'>
-                                <FaMapLocationDot className='text-blue-500' />
-                                {item.HotelAddress}
-                            </p>
-                            <p className='text-green-600 font-semibold'>₹{item.PriceRange}</p>
-                            <p className='text-yellow-500 flex items-center gap-1'>
-                                <FaStar /> {item.Rating}
-                            </p>
+        <div className='mt-6'>
+            {/* Title Section */}
+            <h2 className='font-bold text-2xl flex items-center  gap-2 mb-6'>
+                <FaHotel className='text-blue-500' />
+                Hotel Recommendation
+            </h2>
+
+            {/* Hotel List */}
+            <div className='flex flex-wrap justify-center gap-6'>
+                {Array.isArray(trip.tripData?.tripData?.HotelOptions) && trip.tripData.tripData.HotelOptions.length > 0 ? (
+                    trip.tripData.tripData.HotelOptions.map((item, index) => (
+                        <div 
+                            key={index} 
+                            className='flex flex-col border border-gray-300 p-5 rounded-lg w-[300px] shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 cursor-pointer'
+                            onClick={() => openGoogleMaps(item.HotelName, item.HotelAddress)}
+                        >
+                            <div className="text-center">
+                                <p className='font-bold text-lg'>{item.HotelName}</p>
+                                <p className='text-sm text-gray-600 flex items-center justify-center gap-2 mt-1'>
+                                    <FaMapLocationDot className='text-blue-500' />
+                                    {item.HotelAddress}
+                                </p>
+                                <p className='text-green-600 font-semibold mt-2'>₹{item.PriceRange}</p>
+                                <p className='text-yellow-500 flex items-center justify-center gap-1 mt-1'>
+                                    <FaStar /> {item.Rating}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                ))
-            ) : (
-                <p>No hotels available</p>
-            )}
+                    ))
+                ) : (
+                    <p className="text-center text-gray-500">No hotels available</p>
+                )}
+            </div>
         </div>
-    )
+    );
 }
 
 export default Hotel;
