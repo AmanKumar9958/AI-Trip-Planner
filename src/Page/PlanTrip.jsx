@@ -112,7 +112,7 @@ const PlanTrip = () => {
         userEmailID: users.email,
         id: docID,
         });
-        navigate('/viewtrip/' + docID)
+        navigate('/trip/' + docID)
     }
 
 
