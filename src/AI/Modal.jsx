@@ -14,7 +14,6 @@ const generationConfig = {
     maxOutputTokens: 8192,
     responseMimeType: "application/json",
 };
-
 export const chatSession = model.startChat({
     generationConfig,
     history: [
@@ -22,7 +21,7 @@ export const chatSession = model.startChat({
             role: "user",
             parts: [
                 { 
-                    text: `Generate a detailed travel itinerary for a trip to **{location}** for **{totalDays}**, traveling with **{traveler}**, with a budget of **{budget}**.
+                    text: `Generate a detailed travel itinerary for a trip to **{location}** for **{totalDays}** days, traveling with **{traveler}**, with a budget of **{budget}**.
 
                     The output must be in **strict JSON format** with the **exact key names** as follows:
 
@@ -43,7 +42,28 @@ export const chatSession = model.startChat({
                             ],
                             "Itinerary": [
                                 {
-                                    "Day": "string",
+                                    "Day": "Day 1",
+                                    "PlaceName": "string",
+                                    "PlaceDetails": "string",
+                                    "PlaceImageURL": "string",
+                                    "GeoCoordinates": "string",
+                                    "TicketPricing": "string",
+                                    "TravelTime": "string",
+                                    "BestTimeToVisit": "string"
+                                },
+                                {
+                                    "Day": "Day 2",
+                                    "PlaceName": "string",
+                                    "PlaceDetails": "string",
+                                    "PlaceImageURL": "string",
+                                    "GeoCoordinates": "string",
+                                    "TicketPricing": "string",
+                                    "TravelTime": "string",
+                                    "BestTimeToVisit": "string"
+                                },
+                                ...
+                                {
+                                    "Day": "Day {totalDays}",
                                     "PlaceName": "string",
                                     "PlaceDetails": "string",
                                     "PlaceImageURL": "string",
@@ -57,9 +77,11 @@ export const chatSession = model.startChat({
                     }
                     \`\`\`
                     
-                    - **Ensure that the JSON follows this exact structure.**
-                    - **Do not change key names (e.g., 'HotelOptions' should not become 'hotels').**
-                    - **Ensure consistency across all responses.**`
+                    - **Ensure that the itinerary includes exactly {totalDays} days. Do not skip any days.**
+                    - **Maintain consistency in format and structure.**
+                    - **Do not leave any day empty or missing.**
+                    - **Ensure all key names remain unchanged.**
+                    - **If a day has multiple activities, list them under the same "Day".**`
                 },
             ],
         },
