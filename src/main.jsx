@@ -8,7 +8,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from 'sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './Context/AuthContext.jsx';
-import AllTrips from './Page/AllTrips.jsx';
 import Trip from './Page/viewTrip/Trip.jsx';
 import MyTrips from './Page/MyTrips.jsx';
 
