@@ -9,7 +9,7 @@ const ViewTripButton = () => {
             <motion.div>
                 <div className='flex justify-between items-center w-full gap-3'>
                     <div>
-                        <Link to="/AllTrips">
+                        <Link to="/MyTrips">
                             <p className="text-black border-1 border-black px-2 py-2 rounded-xl font-semibold hover:scale-105 transition duration-200">
                                 My Trips ✈️
                             </p>
