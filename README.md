@@ -31,6 +31,13 @@ An intelligent AI-powered trip planning website that helps users generate travel
 
 ---
 
+## 📸 Screenshot
+
+![Screenshot](https://github.com/AmanKumar9958/AI-Trip-Planner/blob/main/public/ss2.png?raw=true)
+![Screenshot](https://github.com/AmanKumar9958/AI-Trip-Planner/blob/main/public/ss3.png?raw=true)
+
+---
+
 ## 🚀 Getting Started
 
 ### 🔧 Installation
