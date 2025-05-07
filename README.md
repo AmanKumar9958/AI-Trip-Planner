@@ -17,7 +17,7 @@ An intelligent AI-powered trip planning website that helps users generate travel
 - 👫 **Travel Companions**: Plan trips for **Solo, Family, Couple, or Friends**.
 - 🔐 **Secure Authentication**: Google Authentication for **Login/Logout**, with credentials stored in **Local Storage** to avoid repeated logins.
 - 📱 **Fully Responsive**: Optimized for all devices, ensuring a smooth experience on desktops, tablets, and mobile phones.
-- ➤ **Share functionaly for your planned trip..
+- ➤  **Share functionaly**: You can now share your planned trips with your friends
 
 ---
 
