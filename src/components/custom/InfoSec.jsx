@@ -2,8 +2,8 @@ import React from 'react'
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { FaLuggageCart } from "react-icons/fa";
-import { FaShareAlt } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import ShareButton from './ShareButton';
 
 const InfoSec = ({trip}) => {
     if (!trip || !trip.userSelection) {
@@ -26,7 +26,8 @@ const InfoSec = ({trip}) => {
                     </div>
                     {/* Share Button */}
                     <div className='flex justify-end'>
-                        <button className='bg-blue-500 text-white px-4 py-2 rounded-md'><FaShareAlt /></button>
+                        {/* <button className='bg-blue-500 text-white px-4 py-2 rounded-md'><FaShareAlt /></button> */}
+                        <button className='bg-blue-500 text-white px-4 py-2 rounded-md'><ShareButton/></button>
                     </div>
                 </div>
                 <div className='flex flex-wrap gap-4 space-x-20'>
