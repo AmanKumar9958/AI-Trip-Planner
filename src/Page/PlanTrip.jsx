@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import LocationSearch from '../components/custom/LocationSearch';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
