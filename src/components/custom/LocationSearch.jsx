@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 
 const LocationSearch = ({onChange}) => {
   const [query, setQuery] = useState("");

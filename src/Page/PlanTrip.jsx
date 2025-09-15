@@ -64,40 +64,43 @@ const PlanTrip = () => {
 
     // generate trip..
     const generateTrip = async () => {
-        if(user){
-            if (!formData?.["TravelingWith"] ||
-                !formData?.["TotalDays"] ||
-                !formData?.budget) {
-                toast.error("Please fill all the details correctly.", {
-                    style: { backgroundColor: "#FF4C4C", color: "white" },
-                });
-                return;
-            }
-            toast.success("Generating Trip, please wait 🙏");
-            setLoading(true);
-    
+        // Early exit if user not logged in
+        if (!user) {
+            toast.error("Please login to generate a trip.");
+            setOpenDialog(true);
+            return;
+        }
+
+        // Basic validation
+        if (!formData?.["TravelingWith"] ||
+            !formData?.["TotalDays"] ||
+            !formData?.budget) {
+            toast.error("Please fill all the details correctly.", {
+                style: { backgroundColor: "#FF4C4C", color: "white" },
+            });
+            return;
+        }
+
+        toast.success("Generating Trip, please wait 🙏");
+        setLoading(true);
+        try {
             const FINAL_PROMPT = AI_PROMPT
                 .replace('{location}', formData?.['Location'] || "Unknown Location")
                 .replace('{totalDays}', formData?.["TotalDays"])
                 .replace('{traveler}', formData?.["TravelingWith"])
                 .replace('{budget}', formData?.budget);
-    
+
             const result = await chatSession.sendMessage(FINAL_PROMPT);
-            console.log(result.response.text());    // temporary console log..
-            saveTripData(result.response.text());   // saving data in firebase..
+            console.log(result.response.text()); // temporary console log
+            await saveTripData(result.response.text()); // saving data in firebase
             toast.success("Trip generated successfully 🎉", {
                 style: { backgroundColor: "#4CAF50", color: "white" },
             });
-    
+        } catch (err) {
+            console.error("Error generating trip:", err);
+            toast.error("Failed to generate trip. Please try again.");
+        } finally {
             setLoading(false);
-    
-            if (!user) {
-                toast.error("No user Found!!");
-                setOpenDialog(true);
-                return;
-            }
-        } else{
-            navigate('/')
         }
     };
 

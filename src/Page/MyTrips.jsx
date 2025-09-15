@@ -81,7 +81,9 @@ const MyTrips = () => {
                                 </p>
                                 <p className="text-gray-400 flex items-center gap-2 mt-2">
                                     <FiClock className="text-green-400" />
-                                    {trip.userSelection?.TotalDays + " Days" || "Unknown Duration"}
+                                    {typeof trip.userSelection?.TotalDays === 'number' && trip.userSelection.TotalDays > 0
+                                        ? `${trip.userSelection.TotalDays} Days`
+                                        : 'Unknown Duration'}
                                 </p>
                                 <p className="text-gray-500 text-sm mt-3">Trip ID: {trip.id}</p>
                             </div>
