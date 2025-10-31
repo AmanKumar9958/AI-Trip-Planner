@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import LocationSearch from '../components/custom/LocationSearch';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
-import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options';
+import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options'; // Ensure path is correct
 import { generateAIResponse } from '../AI/Modal';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,8 +20,6 @@ import { db } from '../Firebase/FirebaseConfig';
 import { useNavigate } from 'react-router';
 
 const MotionSpan = motion.span;
-const MotionH1 = motion.h1;
-const MotionDiv = motion.div;
 
 // Floating travel icons
 const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
@@ -39,10 +37,8 @@ const PlanTrip = () => {
         }));
     };
 
-    // redirect to the view trip page with dynamic routing..
     const navigate = useNavigate();
 
-    // login..
     const login = useGoogleLogin({
         onSuccess: (response) => {
             getUser(response);
@@ -50,7 +46,6 @@ const PlanTrip = () => {
         onError: (error) => console.log("Login Error:", error)
     });
 
-    // fetching user details..
     const getUser = (userInfo) => {
         axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userInfo.access_token}`, {
             headers: {
@@ -60,28 +55,21 @@ const PlanTrip = () => {
         })
         .then((response) => {
             loginUser(response.data);
+            setOpenDialog(false); // Close dialog on success
         })
         .catch((error) => {
             console.error("Error fetching user data:", error);
         });
     };
 
-    // generate trip..
     const generateTrip = async () => {
-        // Early exit if user not logged in
         if (!user) {
-            toast.error("Please login to generate a trip.");
             setOpenDialog(true);
             return;
         }
 
-        // Basic validation
-        if (!formData?.["TravelingWith"] ||
-            !formData?.["TotalDays"] ||
-            !formData?.budget) {
-            toast.error("Please fill all the details correctly.", {
-                style: { backgroundColor: "#FF4C4C", color: "white" },
-            });
+        if (!formData?.["TravelingWith"] || !formData?.["TotalDays"] || !formData?.budget || !formData?.Location) {
+            toast.error("Please fill all the details correctly.");
             return;
         }
 
@@ -95,26 +83,20 @@ const PlanTrip = () => {
                 .replace('{budget}', formData?.budget);
 
             const text = await generateAIResponse(FINAL_PROMPT);
-            console.log(text); // temporary console log
             const json = safeParseJSON(text);
-            await saveTripData(json); // saving data in firebase
-            toast.success("Trip generated successfully 🎉", {
-                style: { backgroundColor: "#4CAF50", color: "white" },
-            });
+            await saveTripData(json);
+            toast.success("Trip generated successfully 🎉");
         } catch (err) {
             console.error("Error generating trip:", err);
-            toast.error("Failed to generate trip. " + (err?.message || "Please try again."));
+            toast.error("Failed to generate trip. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
-    // save trip details to firebase..
     const saveTripData = async (TripData) => {
         const docID = Date.now().toString();
         const users = JSON.parse(localStorage.getItem('user'));
-
-        // Normalize AI output into the expected shape: { tripData: { HotelOptions: [], Itinerary: [] } }
         const normalized = normalizeTripData(TripData);
 
         await setDoc(doc(db, "AI Trips", docID), {
@@ -129,25 +111,17 @@ const PlanTrip = () => {
         navigate('/trip/' + docID)
     }
 
-    // Attempt to parse possibly fenced or extra-text JSON
     function safeParseJSON(text) {
         try {
             return JSON.parse(text);
         } catch {
-            // Strip markdown code fences
-            const cleaned = text
-                .replace(/^```(json)?/gi, '')
-                .replace(/```$/g, '')
-                .trim();
-            try {
-                return JSON.parse(cleaned);
-            } catch {
-                // Fallback: extract first {...} block
+            const cleaned = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+            try { return JSON.parse(cleaned); } 
+            catch {
                 const start = cleaned.indexOf('{');
                 const end = cleaned.lastIndexOf('}');
                 if (start !== -1 && end !== -1 && end > start) {
-                    const slice = cleaned.slice(start, end + 1);
-                    return JSON.parse(slice);
+                    return JSON.parse(cleaned.slice(start, end + 1));
                 }
                 throw new Error('AI did not return valid JSON');
             }
@@ -160,55 +134,36 @@ const PlanTrip = () => {
             try { payload = JSON.parse(payload); } catch { payload = {}; }
         }
         const root = payload && typeof payload === 'object' ? payload : {};
-
-        // Prefer nested tripData, else use root
         const inner = root && root.tripData && typeof root.tripData === 'object' ? root.tripData : root;
 
-        // Helper to pick array by candidate keys (case-insensitive)
         const pickArray = (obj, candidates) => {
             if (!obj || typeof obj !== 'object') return [];
-            // Direct key match (case-insensitive)
             const lcMap = Object.fromEntries(Object.keys(obj).map(k => [k.toLowerCase(), k]));
             for (const cand of candidates) {
                 const hit = lcMap[cand.toLowerCase()];
                 if (hit && Array.isArray(obj[hit])) return obj[hit];
             }
-            // Heuristic: search values for arrays that look like hotel or itinerary entries
-            for (const k of Object.keys(obj)) {
-                const v = obj[k];
-                if (Array.isArray(v) && v.length && typeof v[0] === 'object') return v;
-            }
             return [];
         };
 
-        const hotels = pickArray(inner, [
-            'HotelOptions', 'Hotels', 'HotelList', 'hotels', 'hotelOptions'
-        ]);
-        const itinerary = pickArray(inner, [
-            'Itinerary', 'DailyPlan', 'Plan', 'itinerary'
-        ]);
+        const hotels = pickArray(inner, ['HotelOptions', 'Hotels', 'HotelList', 'hotels', 'hotelOptions']);
+        const itinerary = pickArray(inner, ['Itinerary', 'DailyPlan', 'Plan', 'itinerary']);
 
-        // Minimal field normalization for hotels
         const normHotels = hotels.map(h => ({
             HotelName: h.HotelName || h.name || h.title || '',
             HotelAddress: h.HotelAddress || h.address || '',
-            PriceRange: typeof h.PriceRange === 'number' ? h.PriceRange : Number(h.PriceRange) || 0,
-            HotelImageURL: h.HotelImageURL || h.image || h.imageUrl || '',
-            GeoCoordinates: h.GeoCoordinates || h.coords || h.coordinates || '',
-            Rating: typeof h.Rating === 'number' ? h.Rating : Number(h.Rating) || 0,
-            Description: h.Description || h.desc || h.description || ''
+            PriceRange: h.PriceRange || '',
+            Rating: h.Rating || '',
+            Description: h.Description || ''
         }));
 
-        // Minimal field normalization for itinerary
         const normItinerary = itinerary.map(p => ({
             Day: p.Day || p.day || '',
-            PlaceName: p.PlaceName || p.name || p.title || '',
-            PlaceDetails: p.PlaceDetails || p.details || p.description || '',
-            PlaceImageURL: p.PlaceImageURL || p.image || p.imageUrl || '',
-            GeoCoordinates: p.GeoCoordinates || p.coords || p.coordinates || '',
-            TicketPricing: p.TicketPricing || p.ticket || p.price || '',
-            TravelTime: p.TravelTime || p.time || '',
-            BestTimeToVisit: p.BestTimeToVisit || p.bestTime || ''
+            PlaceName: p.PlaceName || p.name || '',
+            PlaceDetails: p.PlaceDetails || p.details || '',
+            TicketPricing: p.TicketPricing || '',
+            TravelTime: p.TravelTime || '',
+            BestTimeToVisit: p.BestTimeToVisit || ''
         }));
 
         return { tripData: { HotelOptions: normHotels, Itinerary: normItinerary } };
@@ -216,149 +171,158 @@ const PlanTrip = () => {
 
 
     return (
-        <div className="relative w-full min-h-screen px-6 py-6 bg-linear-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center overflow-hidden">
+        <div className="relative w-full min-h-screen bg-slate-50 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
             
-            {/* Floating Travel Icons */}
-            {floatingIcons.map((icon, index) => (
-                <MotionSpan
-                    key={index}
-                    className="absolute text-4xl opacity-50"
-                    style={{
-                        top: `${Math.random() * 100}vh`,
-                        left: `${Math.random() * 100}vw`,
-                    }}
-                    animate={{
-                        y: [-10, 10, -10],
-                        rotate: [0, 10, -10, 0],
-                    }}
-                    transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: Math.random() * 2
-                    }}
-                >
-                    {icon}
-                </MotionSpan>
-            ))}
-
-            {/* Header Section */}
-            <div className="text-center max-w-2xl relative z-10">
-                <MotionH1 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 text-5xl font-extrabold mb-4"
-                >
-                    Tell us your preferences
-                </MotionH1>
-                <p className="text-lg text-gray-200 font-semibold">
-                    Provide basic details, and our AI trip planner will create a customized itinerary for you.
-                </p>
-            </div>
-
-            {/* Destination Search */}
-            <div className="mt-10 w-full max-w-lg">
-                <h2 className="mb-3 text-lg font-semibold text-white">Where do you want to go?</h2>
-                <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
-            </div>
-
-            {/* Trip Duration */}
-            <div className="mt-6 w-full max-w-lg">
-                <h2 className="mb-3 text-lg font-semibold text-white">How many days?</h2>
-                <input 
-                    type="number" 
-                    placeholder="Ex. 3" 
-                    className="w-full p-3 bg-gray-800/40 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-                    onChange={(e) => handleInputChange('TotalDays', e.target.value)}
-                />
-            </div>
-
-            {/* Budget Selection */}
-            <div className="mt-6 w-full max-w-lg">
-                <h2 className="mb-3 text-lg font-semibold text-white">Select your budget</h2>
-                <div className="flex flex-wrap gap-4">
-                    {SelectBudget.map((item, index) => (
-                        <div 
-                            key={index} 
-                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-lg p-2 
-                                cursor-pointer transition-all duration-300 
-                                hover:shadow-lg hover:border-blue-400 
-                                ${formData?.budget === item.budget ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
-                            onClick={() => handleInputChange('budget', item.budget)}
-                        >
-                            <div className="text-blue-400 text-2xl">{item.icon}</div>
-                            <h3 className="text-sm font-semibold mt-2 text-cyan-300">{item.budget}</h3>
-                            <p className="text-xs text-gray-300">{item.amount}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Member Selection */}
-            <div className="mt-6 w-full max-w-lg">
-                <h2 className="mb-3 text-lg font-semibold text-white">
-                    Who do you plan to travel with?
-                </h2>
-                <div className="flex flex-wrap gap-4">
-                    {SelectMembers.map((item, index) => (
-                        <div 
-                            key={index} 
-                            className={`flex flex-col items-center justify-center w-32 h-28 border-2 rounded-lg p-2 
-                                cursor-pointer transition-all duration-300 
-                                hover:shadow-lg hover:border-blue-400 
-                                ${formData?.["TravelingWith"] === item.people ? 'border-blue-500 shadow-xl scale-105 bg-gray-800/50' : 'border-gray-600 bg-gray-800/40'}`}                            
-                            onClick={() => handleInputChange("TravelingWith", item.people)}
-                        >
-                            <div className="text-blue-400 text-2xl">{item.icon}</div>
-                            <h3 className="text-sm font-semibold mt-2 text-cyan-300">{item.people}</h3>
-                            <p className="text-xs text-gray-300">{item.amount}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className='w-full max-w-lg flex items-center gap-4'>
-
-                {/* Generate Button */}
-                <div className="mt-10 w-full max-w-lg flex justify-center items-center">
-                    <MotionDiv 
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
+            {/* Background Decorations */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                {floatingIcons.map((icon, index) => (
+                    <MotionSpan
+                        key={index}
+                        className="absolute text-4xl opacity-10 grayscale"
+                        style={{
+                            top: `${Math.random() * 100}vh`,
+                            left: `${Math.random() * 100}vw`,
+                        }}
+                        animate={{
+                            y: [-20, 20, -20],
+                            rotate: [0, 15, -15, 0],
+                        }}
+                        transition={{
+                            duration: 5 + Math.random() * 5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
                     >
+                        {icon}
+                    </MotionSpan>
+                ))}
+            </div>
+
+            <div className="max-w-4xl mx-auto relative z-10">
+                {/* Header Section */}
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                        Tell us your <span className="text-indigo-600">Preferences</span>
+                    </h1>
+                    <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+                        Provide us with a few basic details, and our AI will curate the perfect itinerary tailored just for you.
+                    </p>
+                </div>
+
+                <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-10 space-y-10">
+                    
+                    {/* Destination Search */}
+                    <div className="space-y-3">
+                        <h2 className="text-xl font-semibold text-slate-800">What is your destination of choice?</h2>
+                        <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
+                    </div>
+
+                    {/* Trip Duration */}
+                    <div className="space-y-3">
+                        <h2 className="text-xl font-semibold text-slate-800">How many days are you planning?</h2>
+                        <input 
+                            type="number" 
+                            min="1"
+                            placeholder="Ex. 3" 
+                            className="w-full p-4 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 text-lg shadow-sm"
+                            onChange={(e) => handleInputChange('TotalDays', e.target.value)}
+                        />
+                    </div>
+
+                    {/* Budget Selection */}
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-semibold text-slate-800">What is your Budget?</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                            {SelectBudget.map((item, index) => (
+                                <div 
+                                    key={index} 
+                                    onClick={() => handleInputChange('budget', item.budget)}
+                                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
+                                    ${formData?.budget === item.budget 
+                                        ? 'border-indigo-600 bg-indigo-50 shadow-md transform scale-[1.02]' 
+                                        : 'border-slate-100 bg-white hover:border-indigo-200'}`}
+                                >
+                                    <div className="text-3xl mb-1">{item.icon}</div>
+                                    <h3 className="font-bold text-slate-800">{item.budget}</h3>
+                                    <p className="text-xs text-slate-500 font-medium">{item.amount}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Member Selection */}
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-semibold text-slate-800">Who are you traveling with?</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                            {SelectMembers.map((item, index) => (
+                                <div 
+                                    key={index} 
+                                    onClick={() => handleInputChange("TravelingWith", item.people)}
+                                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
+                                    ${formData?.["TravelingWith"] === item.people 
+                                        ? 'border-indigo-600 bg-indigo-50 shadow-md transform scale-[1.02]' 
+                                        : 'border-slate-100 bg-white hover:border-indigo-200'}`}
+                                >
+                                    <div className="text-3xl mb-1">{item.icon}</div>
+                                    <h3 className="font-bold text-slate-800">{item.people}</h3>
+                                    <p className="text-xs text-slate-500 font-medium">{item.amount}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Generate Button */}
+                    <div className="pt-8 flex justify-end">
                         <Button 
                             disabled={loading}
                             onClick={generateTrip}
-                            className="bg-linear-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
+                            className="w-full md:w-auto h-14 px-10 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded-full font-bold shadow-lg shadow-indigo-200 transition-all hover:scale-105 flex items-center justify-center gap-3"
                         >
-                            {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
+                            {loading ? (
+                                <AiOutlineLoading3Quarters className='animate-spin h-6 w-6' />
+                            ) : (
+                                <><span>Generate Trip</span> ✈️</>
+                            )}
                         </Button>
-                    </MotionDiv>
+                    </div>
                 </div>
             </div>
 
-            {/* Dialog Box */}
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogContent className='bg-linear-to-r from-[#141e30] to-[#243b55]'>
-                    <DialogTitle>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-                            <img src="Favicon.svg" alt="Logo" />
-                            Trip<span className="text-cyan-400">Genius</span>
-                        </h1>
-                    </DialogTitle>
-                    <DialogContentText>
-                        <h1 className='text-white'>Continue with Google</h1>
-                        <p className='text-white'>Sign in to the App with Google authentication securely</p>
+            {/* Authentication Dialog */}
+            <Dialog 
+                open={openDialog} 
+                onClose={() => setOpenDialog(false)}
+                PaperProps={{
+                    style: { borderRadius: 20, padding: 10 }
+                }}
+            >
+                <DialogTitle className="text-center">
+                    <div className="font-bold text-2xl text-slate-900">
+                        Sign In Required
+                    </div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className="text-center text-slate-600 mb-4">
+                        Please sign in with Google to securely save and access your trip plans.
                     </DialogContentText>
+                    <div className="flex flex-col gap-3 mt-4">
+                         <Button 
+                            onClick={() => login()}
+                            className="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 py-3 rounded-xl shadow-sm font-semibold text-md h-12"
+                        >
+                            <FcGoogle className="text-2xl" /> 
+                            Sign in with Google
+                        </Button>
+                        <Button 
+                            onClick={() => setOpenDialog(false)} 
+                            variant="ghost" 
+                            className="text-slate-400 hover:text-slate-600"
+                        >
+                            Cancel
+                        </Button>
+                    </div>
                 </DialogContent>
-                <DialogActions className='bg-linear-to-r from-[#141e30] to-[#243b55]'>
-                    <Button onClick={() => setOpenDialog(false)} className="bg-red-600 hover:bg-red-500 text-white">Cancel</Button>
-                    <Button onClick={() => {
-                        login();
-                        setOpenDialog(false);
-                    }}>
-                        <FcGoogle />Sign in with Google
-                    </Button>
-                </DialogActions>
+                <DialogActions></DialogActions> {/* Kept empty to use custom layout in Content */}
             </Dialog>
         </div>
     );

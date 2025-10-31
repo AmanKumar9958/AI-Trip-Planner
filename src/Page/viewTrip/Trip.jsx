@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { useParams } from 'react-router-dom'; // use react-router-dom instead of react-router
+import { useParams } from 'react-router-dom';
 import { db } from '../../Firebase/FirebaseConfig';
 import { toast } from 'sonner';
 import InfoSec from '../../components/custom/InfoSec';
@@ -9,7 +9,7 @@ import VisitingPlaces from '../../components/custom/VisitingPlaces';
 
 const Trip = () => {
     const { tripid } = useParams();
-    const fetched = useRef(false); // Prevent duplicate calls
+    const fetched = useRef(false);
     const [trip, setTrip] = useState(null);
 
     useEffect(() => {
@@ -20,30 +20,40 @@ const Trip = () => {
     }, [tripid]);
 
     const getTripData = async () => {
-        const docRef = doc(db, 'AI Trips', tripid);
-        const docSnap = await getDoc(docRef);
+        try {
+            const docRef = doc(db, 'AI Trips', tripid);
+            const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            setTrip(docSnap.data());
-            toast.success("Trip found!");
-        } else {
-            toast.error("No Trip Found", {
-                style: { backgroundColor: "#FF4C4C", color: "white" },
-            });
+            if (docSnap.exists()) {
+                setTrip(docSnap.data());
+            } else {
+                toast.error("Trip not found");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error loading trip");
         }
     }
+
     return (
-        <div className='p-10 md:px-14 lg:px-40 xl:px-56'>
-            {/* Information Section */}
-            <InfoSec trip={trip} />
+        <div className='min-h-screen bg-slate-50'>
+            {/* The wrapper here ensures consistent padding across different screen sizes 
+               consistent with the "SAAS" look (plenty of whitespace).
+            */}
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20'>
+                
+                {/* Information Header */}
+                <InfoSec trip={trip} />
 
-            {/* Recommended Hotels */}
-            <Hotel trip={trip} />
+                {/* Hotels Section */}
+                <Hotel trip={trip} />
 
-            {/* Daily Plan */}
-            <VisitingPlaces trip={trip}/>
+                {/* Itinerary Section */}
+                <VisitingPlaces trip={trip}/>
+                
+            </div>
         </div>
     )
 }
 
-export default Trip
+export default Trip;

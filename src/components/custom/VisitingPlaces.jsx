@@ -1,21 +1,19 @@
 import React from 'react';
-import { FaMap, FaClock } from "react-icons/fa6";
-import { IoTicketSharp } from "react-icons/io5";
+import { FaMapMarkerAlt, FaClock, FaTicketAlt } from "react-icons/fa";
+import { IoTimeOutline } from "react-icons/io5";
 
 const VisitingPlaces = ({ trip }) => {
-    // Accept either nested trip.tripData.tripData or flat trip.tripData
     if (!trip || !trip.tripData) {
-        return <p className='text-gray-600 text-center mt-5'>Loading Your Daily Trip Plan...</p>;
+        return <div className='p-8 text-center text-slate-400 italic'>Loading Your Daily Trip Plan...</div>;
     }
 
     const root = trip.tripData.tripData || trip.tripData;
     const itinerary = root.Itinerary;
 
     if (!itinerary || !Array.isArray(itinerary)) {
-        return <p className='text-gray-600 text-center mt-5'>No trip data available.</p>;
+        return <div className='p-8 text-center text-slate-400'>No detailed itinerary available.</div>;
     }
 
-    // Grouping places by Day
     const groupByDay = (itinerary) => {
         return itinerary.reduce((acc, place) => {
             acc[place.Day] = acc[place.Day] || [];
@@ -27,51 +25,68 @@ const VisitingPlaces = ({ trip }) => {
     const groupedItinerary = groupByDay(itinerary);
 
     const openGoogleMaps = (placeName) => {
-        const mapUrl = `https://www.google.com/maps?q=${placeName}`;
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeName)}`;
         window.open(mapUrl, '_blank');
     };
 
     return (
-        <div className='mt-10'>
-            <h2 className='font-bold text-2xl flex items-center gap-2 mb-4'>
-                <FaMap className='text-blue-500' /> Your Itinerary
-            </h2>
+        <div className='mt-16 mb-20'>
+            <div className="flex items-center gap-3 mb-8">
+                <div className="bg-indigo-100 p-2 rounded-lg">
+                     <span className="text-2xl">🗺️</span>
+                </div>
+                <h2 className='font-bold text-2xl text-slate-900'>Places to Visit</h2>
+            </div>
 
-            <div className='space-y-6 cursor-default'>
+            <div className='space-y-12'>
                 {Object.keys(groupedItinerary).map((day, index) => (
-                    <div key={index} className='bg-gray-100 p-4 rounded-lg shadow-md'>
-                        <p className='font-bold text-lg text-blue-600'>{day}</p>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2'>
+                    <div key={index} className='relative'>
+                        
+                        {/* Day Header */}
+                        <div className="sticky top-24 z-10 bg-slate-50/95 backdrop-blur-sm py-4 mb-6 border-b border-slate-200">
+                             <h3 className='font-bold text-xl md:text-2xl text-indigo-700 capitalize'>{day}</h3>
+                        </div>
+                       
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6'>
                             {groupedItinerary[day].map((place, placeIndex) => (
                                 <div 
                                     key={placeIndex} 
-                                    className='border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer'
+                                    className='group relative bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-300 cursor-pointer flex flex-col gap-3'
                                     onClick={() => openGoogleMaps(place.PlaceName)}
                                 >
-                                    {/* Place Name */}
-                                    <p className='font-semibold text-xl text-gray-800'>{place.PlaceName}</p>
+                                    {/* Top Row: Name & Time */}
+                                    <div className="flex justify-between items-start">
+                                        <h4 className='font-bold text-lg text-slate-800 group-hover:text-indigo-600 transition-colors'>
+                                            {place.PlaceName}
+                                        </h4>
+                                        <span className='text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-1 rounded-md whitespace-nowrap'>
+                                            {place.TravelTime || 'Day Visit'}
+                                        </span>
+                                    </div>
 
-                                    {/* Place Details */}
-                                    <p className='text-gray-600 mt-2'>{place.PlaceDetails}</p>
-
-                                    {/* Best Time to Visit */}
-                                    <p className='text-gray-600 mt-2 flex items-center gap-2'>
-                                        <FaClock className='text-gray-500' /> Best Time: {place.BestTimeToVisit || 'N/A'}
+                                    {/* Details */}
+                                    <p className='text-sm text-slate-500 leading-relaxed'>
+                                        {place.PlaceDetails}
                                     </p>
 
-                                    {/* Ticket Pricing (if available) */}
-                                    {place.TicketPricing && (
-                                        <p className='text-gray-600 mt-2 flex items-center gap-2'>
-                                            <IoTicketSharp className='text-gray-500' /> {place.TicketPricing}
-                                        </p>
-                                    )}
-
-                                    {/* Travel Time (if available) */}
-                                    {place.TravelTime && (
-                                        <p className='text-gray-600 mt-2 flex items-center gap-2'>
-                                            <FaClock className='text-gray-500' /> {place.TravelTime}
-                                        </p>
-                                    )}
+                                    {/* Footer Info */}
+                                    <div className="mt-auto pt-4 flex flex-wrap gap-4 text-xs font-medium text-slate-500">
+                                        <div className="flex items-center gap-1.5">
+                                            <FaClock className='text-orange-400' /> 
+                                            <span>Best Time: {place.BestTimeToVisit || 'Anytime'}</span>
+                                        </div>
+                                        {place.TicketPricing && (
+                                            <div className="flex items-center gap-1.5">
+                                                <FaTicketAlt className='text-green-500' /> 
+                                                <span>{place.TicketPricing}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Map Icon Overlay */}
+                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-10 translate-x-2 group-hover:translate-x-0 transition-all">
+                                        <FaMapMarkerAlt className="text-6xl text-indigo-600" />
+                                    </div>
                                 </div>
                             ))}
                         </div>

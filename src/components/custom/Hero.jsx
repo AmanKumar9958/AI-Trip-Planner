@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { AuthContext } from "../../Context/AuthContext";
 
 const floatingVariants = {
     initial: { y: 0 },
-    animate: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" } }
+    animate: { y: [0, -15, 0], transition: { repeat: Infinity, duration: 4, ease: "easeInOut" } }
 };
 
 const Hero = () => {
@@ -39,70 +39,68 @@ const Hero = () => {
     };
 
     return (
-        <div className="relative w-full min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-cyan-500">
+        <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-50">
             
-            {/* Floating Travel Icons */}
-            <motion.span className="absolute top-10 left-20 text-5xl" variants={floatingVariants} initial="initial" animate="animate">✈️</motion.span>
-            <motion.span className="absolute top-20 right-32 text-4xl" variants={floatingVariants} initial="initial" animate="animate">🌍</motion.span>
-            <motion.span className="absolute bottom-10 left-32 text-4xl" variants={floatingVariants} initial="initial" animate="animate">🏕️</motion.span>
-            <motion.span className="absolute bottom-20 right-20 text-5xl" variants={floatingVariants} initial="initial" animate="animate">🎒</motion.span>
-            <motion.span className="absolute top-1/2 left-1/3 text-4xl" variants={floatingVariants} initial="initial" animate="animate">🚢</motion.span>
+            {/* Background Decor */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+            </div>
+
+            {/* Floating Travel Icons - Subtle */}
+            <Motion.span className="absolute top-20 left-[10%] text-4xl opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" variants={floatingVariants} initial="initial" animate="animate">✈️</Motion.span>
+            <Motion.span className="absolute top-32 right-[15%] text-3xl opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" variants={floatingVariants} initial="initial" animate="animate">🌍</Motion.span>
+            <Motion.span className="absolute bottom-32 left-[15%] text-3xl opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" variants={floatingVariants} initial="initial" animate="animate">🏕️</Motion.span>
+            <Motion.span className="absolute bottom-20 right-[10%] text-4xl opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" variants={floatingVariants} initial="initial" animate="animate">🎒</Motion.span>
 
             {/* Main Content */}
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                transition={{ duration: 1 }} 
-                className="relative z-10 flex flex-col items-center text-center px-6"
+            <Motion.div 
+                initial={{ opacity: 0, y: 30 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ duration: 0.8 }} 
+                className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto"
             >
-                <motion.h1 
-                    initial={{ y: 20, opacity: 0 }} 
-                    animate={{ y: 0, opacity: 1 }} 
-                    transition={{ delay: 0.2 }} 
-                    className="text-white text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-lg"
-                >
-                    Explore The World with AI
-                </motion.h1>
+                <div className="mb-6 inline-block px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-semibold tracking-wide uppercase">
+                    AI Trip Planner
+                </div>
 
-                <motion.h2 
-                    initial={{ y: 20, opacity: 0 }} 
-                    animate={{ y: 0, opacity: 1 }} 
-                    transition={{ delay: 0.4 }} 
-                    className="text-2xl md:text-4xl font-semibold text-white mb-6"
+                <Motion.h1 
+                    className="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-6 tracking-tight"
                 >
-                    Your Personalized Itinerary Awaits
-                </motion.h2>
+                    Explore The World <br />
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-purple-600">
+                        Smartly with AI
+                    </span>
+                </Motion.h1>
 
-                <motion.p 
-                    initial={{ opacity: 0, y: 10 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    transition={{ delay: 0.6 }} 
-                    className="max-w-2xl text-lg text-white mb-10"
+                <Motion.p 
+                    className="max-w-2xl text-lg md:text-xl text-slate-600 mb-10 leading-relaxed"
                 >
-                    AI-powered travel planner that tailors trips based on your interests, budget, and travel style.
-                </motion.p>
+                    Experience the future of travel planning. Curate personalized itineraries tailored to your interests, budget, and style in seconds.
+                </Motion.p>
 
-                <motion.div 
-                    initial={{ scale: 0.9, opacity: 0 }} 
-                    animate={{ scale: 1, opacity: 1 }} 
-                    transition={{ delay: 0.8, type: 'spring', stiffness: 120 }}
+                <Motion.div 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                 >
                     {user ? (
                         <Link to={'/plantrip'}>
-                            <Button className="bg-white text-purple-600 px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg transform hover:scale-105 hover:bg-gray-100">
+                            <Button className="h-14 px-10 rounded-full text-lg font-bold shadow-xl shadow-indigo-200 bg-indigo-600 hover:bg-indigo-700 text-white transition-all">
                                 Start Planning Now →
                             </Button>
                         </Link>
                     ) : (
                         <Button 
-                            className="bg-white text-purple-600 px-8 py-4 rounded-full text-lg font-bold transition-all shadow-lg transform hover:scale-105 hover:bg-gray-100"
+                            className="h-14 px-10 rounded-full text-lg font-bold shadow-xl shadow-indigo-200 bg-indigo-600 hover:bg-indigo-700 text-white transition-all"
                             onClick={login}
                         >
                             Start Planning Now →
                         </Button>
                     )}
-                </motion.div>
-            </motion.div>
+                </Motion.div>
+            </Motion.div>
         </div>
     );
 };
