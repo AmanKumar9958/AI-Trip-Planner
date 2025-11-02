@@ -19,6 +19,10 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from '../Firebase/FirebaseConfig';
 import { useNavigate } from 'react-router';
 
+const MotionSpan = motion.span;
+const MotionH1 = motion.h1;
+const MotionDiv = motion.div;
+
 // Floating travel icons
 const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
 
@@ -212,11 +216,11 @@ const PlanTrip = () => {
 
 
     return (
-        <div className="relative w-full min-h-screen px-6 py-6 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center overflow-hidden">
+        <div className="relative w-full min-h-screen px-6 py-6 bg-linear-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex flex-col items-center overflow-hidden">
             
             {/* Floating Travel Icons */}
             {floatingIcons.map((icon, index) => (
-                <motion.span
+                <MotionSpan
                     key={index}
                     className="absolute text-4xl opacity-50"
                     style={{
@@ -235,18 +239,18 @@ const PlanTrip = () => {
                     }}
                 >
                     {icon}
-                </motion.span>
+                </MotionSpan>
             ))}
 
             {/* Header Section */}
             <div className="text-center max-w-2xl relative z-10">
-                <motion.h1 
+                <MotionH1 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-5xl font-extrabold mb-4"
+                    className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 text-5xl font-extrabold mb-4"
                 >
                     Tell us your preferences
-                </motion.h1>
+                </MotionH1>
                 <p className="text-lg text-gray-200 font-semibold">
                     Provide basic details, and our AI trip planner will create a customized itinerary for you.
                 </p>
@@ -317,24 +321,24 @@ const PlanTrip = () => {
 
                 {/* Generate Button */}
                 <div className="mt-10 w-full max-w-lg flex justify-center items-center">
-                    <motion.div 
+                    <MotionDiv 
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         <Button 
                             disabled={loading}
                             onClick={generateTrip}
-                            className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
+                            className="bg-linear-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
                         >
                             {loading ? <AiOutlineLoading3Quarters className='animate-spin h-10 w-10' /> : "Generate Trip ✈️"}
                         </Button>
-                    </motion.div>
+                    </MotionDiv>
                 </div>
             </div>
 
             {/* Dialog Box */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogContent className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
+                <DialogContent className='bg-linear-to-r from-[#141e30] to-[#243b55]'>
                     <DialogTitle>
                         <h1 className="text-3xl font-bold text-white flex items-center gap-2">
                             <img src="Favicon.svg" alt="Logo" />
@@ -346,7 +350,7 @@ const PlanTrip = () => {
                         <p className='text-white'>Sign in to the App with Google authentication securely</p>
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
+                <DialogActions className='bg-linear-to-r from-[#141e30] to-[#243b55]'>
                     <Button onClick={() => setOpenDialog(false)} className="bg-red-600 hover:bg-red-500 text-white">Cancel</Button>
                     <Button onClick={() => {
                         login();

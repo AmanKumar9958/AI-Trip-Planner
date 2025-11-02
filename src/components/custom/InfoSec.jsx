@@ -13,7 +13,7 @@ const InfoSec = ({trip}) => {
         <div>
             {/* Image */}
             <img 
-                src="/BG_Image_2.png"
+                src={'/BG_Image_2.png'}
                 alt="Island"
                 className='w-full sm:w-4/5 m-auto h-[250px] sm:h-[400px] object-cover rounded-xl'
             />

@@ -8,9 +8,12 @@ const genAI = new GoogleGenerativeAI(apiKey);
 // If env not set, fall back to gemini-1.0-pro which is widely available.
 const requestedModel = (import.meta.env.VITE_GEMINI_MODEL || "").trim();
 const aliasMap = {
-    // Map deprecated or account-inaccessible aliases to broadly supported ones
-    // "gemini-1.5-flash": "gemini-1.5-pro",
-    // "gemini-1.5-flash-latest": "gemini-1.5-pro-latest",
+    // Map deprecated or account-inaccessible aliases to broadly supported ones (updated for 2026 model availability)
+    "gemini-1.5-flash": "gemini-flash-latest",
+    "gemini-1.5-pro": "gemini-flash-latest",
+    "gemini-1.0-pro": "gemini-flash-latest",
+    "gemini-pro": "gemini-flash-latest",
+    "gemini-2.0-flash": "gemini-flash-latest" // Fallback if 2.0 is rate limited
 };
 let modelId = requestedModel || "gemini-1.0-pro";
 if (aliasMap[modelId]) {
@@ -24,7 +27,7 @@ logger.info(`[AI] Generative model in use: ${modelId}`);
 const model = genAI.getGenerativeModel({ model: modelId });
 
 // Helper: try generating with fallback models to avoid 404s on specific accounts/regions
-const candidatesBase = [modelId, "gemini-1.5-pro", "gemini-1.0-pro"];
+const candidatesBase = [modelId, "gemini-flash-latest", "gemini-2.0-flash", "gemini-2.5-flash"];
 const candidates = Array.from(new Set(candidatesBase));
 
 function is404Like(err) {
@@ -97,23 +100,35 @@ export async function generateAIResponse(prompt, config = {}) {
 }
 
 async function generateViaRestV1(modelName, prompt, genCfg) {
-    const url = `https://generativelanguage.googleapis.com/v1/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    // Strip responseMimeType which REST v1 may reject from generationConfig
+    // Try v1beta first as it supports more models
+    let url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    
+    // Strip responseMimeType which REST v1/v1beta may reject from generationConfig or support differently
     const { responseMimeType: _omitResponseMimeType, ...restGenCfg } = genCfg || {};
     const body = {
         contents: [{ role: "user", parts: [{ text: prompt }]}],
-        // REST v1 currently rejects responseMimeType in generationConfig; strip it
         generationConfig: restGenCfg,
     };
-    const resp = await fetch(url, {
+    
+    let resp = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
+
+    // If v1beta fails with 404, try v1
+    if (resp.status === 404) {
+        url = `https://generativelanguage.googleapis.com/v1/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        resp = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+    }
+
     if (!resp.ok) {
         const text = await resp.text().catch(() => "");
-        const err = new Error(`REST v1 error ${resp.status}: ${text}`);
-        // Tag 404-like conditions
+        const err = new Error(`REST error ${resp.status}: ${text}`);
         if (resp.status === 404) err.message = `404 ${text}`;
         throw err;
     }
@@ -124,7 +139,8 @@ async function generateViaRestV1(modelName, prompt, genCfg) {
 }
 
 async function listModelsViaRest() {
-    const url = `https://generativelanguage.googleapis.com/v1/models?key=${encodeURIComponent(apiKey)}`;
+    // Try v1beta for listing models
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
     const resp = await fetch(url);
     if (!resp.ok) {
         const text = await resp.text().catch(() => "");

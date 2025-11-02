@@ -23,6 +23,7 @@ const Avatar = ({ src, name = '', size = 40, className = '' }) => {
           src={src}
           alt={name || 'User avatar'}
           loading="lazy"
+          referrerPolicy="no-referrer"
           onError={() => setError(true)}
           className="w-full h-full object-cover"
         />
