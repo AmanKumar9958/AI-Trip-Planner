@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 
 const LocationSearch = ({onChange}) => {
   const [query, setQuery] = useState("");
@@ -9,42 +9,32 @@ const LocationSearch = ({onChange}) => {
 
   const API_KEY = import.meta.env.VITE_PLACE_API; // Ensure this is correctly set
 
-  // Debounce function to limit API calls
-  const debounce = (func, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
+  // Debounce with ref to avoid hook deps issues
+  const timerRef = useRef(null);
+  const fetchSuggestions = async (q) => {
+    const query = q.trim();
+    if (!query || query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const url = `https://api.locationiq.com/v1/autocomplete?key=${API_KEY}&q=${encodeURIComponent(query)}&limit=5&format=json`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+      setSuggestions([]);
+    }
   };
-
-  // Fetch suggestions with debounce
-  const fetchSuggestions = useCallback(
-    debounce(async (query) => {
-      if (!query.trim()) {
-        setSuggestions([]);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `https://api.locationiq.com/v1/autocomplete.php?key=${API_KEY}&q=${query}&limit=5&format=json`
-        );        
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        setSuggestions(data);
-      } catch (error) {
-        console.error("Error fetching location data:", error);
-        setSuggestions([]); // Reset suggestions on error
-      }
-    }, 500), // 500ms debounce time
-    []
-  );
 
   // Handle user input
   const handleInputChange = (e) => {
-    setQuery(e.target.value);
-    fetchSuggestions(e.target.value);
+    const q = e.target.value;
+    setQuery(q);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => fetchSuggestions(q), 500);
     setSelectedIndex(-1); // Reset selection index
   };
 

@@ -3,7 +3,7 @@ import LocationSearch from '../components/custom/LocationSearch';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options';
-import { chatSession } from '../AI/Modal';
+import { generateAIResponse } from '../AI/Modal';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -90,9 +90,10 @@ const PlanTrip = () => {
                 .replace('{traveler}', formData?.["TravelingWith"])
                 .replace('{budget}', formData?.budget);
 
-            const result = await chatSession.sendMessage(FINAL_PROMPT);
-            console.log(result.response.text()); // temporary console log
-            await saveTripData(result.response.text()); // saving data in firebase
+            const text = await generateAIResponse(FINAL_PROMPT);
+            console.log(text); // temporary console log
+            const json = safeParseJSON(text);
+            await saveTripData(json); // saving data in firebase
             toast.success("Trip generated successfully 🎉", {
                 style: { backgroundColor: "#4CAF50", color: "white" },
             });
@@ -109,13 +110,104 @@ const PlanTrip = () => {
         const docID = Date.now().toString();
         const users = JSON.parse(localStorage.getItem('user'));
 
+        // Normalize AI output into the expected shape: { tripData: { HotelOptions: [], Itinerary: [] } }
+        const normalized = normalizeTripData(TripData);
+
         await setDoc(doc(db, "AI Trips", docID), {
-        userSelection: formData,
-        tripData: JSON.parse(TripData),
-        userEmailID: users.email,
-        id: docID,
+            userSelection: { 
+                ...formData,
+                TotalDays: Number(formData?.TotalDays) || 0,
+            },
+            tripData: normalized,
+            userEmailID: users.email,
+            id: docID,
         });
         navigate('/trip/' + docID)
+    }
+
+    // Attempt to parse possibly fenced or extra-text JSON
+    function safeParseJSON(text) {
+        try {
+            return JSON.parse(text);
+        } catch {
+            // Strip markdown code fences
+            const cleaned = text
+                .replace(/^```(json)?/gi, '')
+                .replace(/```$/g, '')
+                .trim();
+            try {
+                return JSON.parse(cleaned);
+            } catch {
+                // Fallback: extract first {...} block
+                const start = cleaned.indexOf('{');
+                const end = cleaned.lastIndexOf('}');
+                if (start !== -1 && end !== -1 && end > start) {
+                    const slice = cleaned.slice(start, end + 1);
+                    return JSON.parse(slice);
+                }
+                throw new Error('AI did not return valid JSON');
+            }
+        }
+    }
+
+    function normalizeTripData(data) {
+        let payload = data;
+        if (typeof payload === 'string') {
+            try { payload = JSON.parse(payload); } catch { payload = {}; }
+        }
+        const root = payload && typeof payload === 'object' ? payload : {};
+
+        // Prefer nested tripData, else use root
+        const inner = root && root.tripData && typeof root.tripData === 'object' ? root.tripData : root;
+
+        // Helper to pick array by candidate keys (case-insensitive)
+        const pickArray = (obj, candidates) => {
+            if (!obj || typeof obj !== 'object') return [];
+            // Direct key match (case-insensitive)
+            const lcMap = Object.fromEntries(Object.keys(obj).map(k => [k.toLowerCase(), k]));
+            for (const cand of candidates) {
+                const hit = lcMap[cand.toLowerCase()];
+                if (hit && Array.isArray(obj[hit])) return obj[hit];
+            }
+            // Heuristic: search values for arrays that look like hotel or itinerary entries
+            for (const k of Object.keys(obj)) {
+                const v = obj[k];
+                if (Array.isArray(v) && v.length && typeof v[0] === 'object') return v;
+            }
+            return [];
+        };
+
+        const hotels = pickArray(inner, [
+            'HotelOptions', 'Hotels', 'HotelList', 'hotels', 'hotelOptions'
+        ]);
+        const itinerary = pickArray(inner, [
+            'Itinerary', 'DailyPlan', 'Plan', 'itinerary'
+        ]);
+
+        // Minimal field normalization for hotels
+        const normHotels = hotels.map(h => ({
+            HotelName: h.HotelName || h.name || h.title || '',
+            HotelAddress: h.HotelAddress || h.address || '',
+            PriceRange: typeof h.PriceRange === 'number' ? h.PriceRange : Number(h.PriceRange) || 0,
+            HotelImageURL: h.HotelImageURL || h.image || h.imageUrl || '',
+            GeoCoordinates: h.GeoCoordinates || h.coords || h.coordinates || '',
+            Rating: typeof h.Rating === 'number' ? h.Rating : Number(h.Rating) || 0,
+            Description: h.Description || h.desc || h.description || ''
+        }));
+
+        // Minimal field normalization for itinerary
+        const normItinerary = itinerary.map(p => ({
+            Day: p.Day || p.day || '',
+            PlaceName: p.PlaceName || p.name || p.title || '',
+            PlaceDetails: p.PlaceDetails || p.details || p.description || '',
+            PlaceImageURL: p.PlaceImageURL || p.image || p.imageUrl || '',
+            GeoCoordinates: p.GeoCoordinates || p.coords || p.coordinates || '',
+            TicketPricing: p.TicketPricing || p.ticket || p.price || '',
+            TravelTime: p.TravelTime || p.time || '',
+            BestTimeToVisit: p.BestTimeToVisit || p.bestTime || ''
+        }));
+
+        return { tripData: { HotelOptions: normHotels, Itinerary: normItinerary } };
     }
 
 
@@ -230,7 +322,7 @@ const PlanTrip = () => {
                         whileTap={{ scale: 0.95 }}
                     >
                         <Button 
-                            disable={loading}
+                            disabled={loading}
                             onClick={generateTrip}
                             className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black text-md px-6 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-lg relative"
                         >
@@ -244,8 +336,9 @@ const PlanTrip = () => {
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogContent className='bg-gradient-to-r from-[#141e30] to-[#243b55]'>
                     <DialogTitle>
-                        <h1 className="text-3xl font-bold text-white">
-                            Trip<span className="text-cyan-400">Planner</span>
+                        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+                            <img src="Favicon.svg" alt="Logo" />
+                            Trip<span className="text-cyan-400">Genius</span>
                         </h1>
                     </DialogTitle>
                     <DialogContentText>

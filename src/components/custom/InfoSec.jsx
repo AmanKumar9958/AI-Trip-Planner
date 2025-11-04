@@ -26,8 +26,8 @@ const InfoSec = ({trip}) => {
                     </div>
                     {/* Share Button */}
                     <div className='flex justify-end'>
-                        {/* <button className='bg-blue-500 text-white px-4 py-2 rounded-md'><FaShareAlt /></button> */}
-                        <button className='bg-blue-500 text-white px-4 py-2 rounded-md'><ShareButton/></button>
+                        {/* Render a single button to avoid nested <button> errors */}
+                        <ShareButton />
                     </div>
                 </div>
                 <div className='flex flex-wrap gap-4 space-x-20'>

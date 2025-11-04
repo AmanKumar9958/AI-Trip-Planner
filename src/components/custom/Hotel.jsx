@@ -5,7 +5,7 @@ const Hotel = ({ trip }) => {
     if (!trip || !trip.userSelection) {
         return <p>Loading Hotels details...</p>;
     }
-
+    const root = (trip?.tripData && (trip.tripData.tripData || trip.tripData)) || {};
     const openGoogleMaps = (hotelName, hotelAddress) => {
         const query = encodeURIComponent(`${hotelName}, ${hotelAddress}`);
         window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
@@ -21,8 +21,8 @@ const Hotel = ({ trip }) => {
 
             {/* Hotel List */}
             <div className='flex flex-wrap justify-center gap-6'>
-                {Array.isArray(trip.tripData?.tripData?.HotelOptions) && trip.tripData.tripData.HotelOptions.length > 0 ? (
-                    trip.tripData.tripData.HotelOptions.map((item, index) => (
+                {Array.isArray(root.HotelOptions) && root.HotelOptions.length > 0 ? (
+                    root.HotelOptions.map((item, index) => (
                         <div 
                             key={index} 
                             className='flex flex-col border border-gray-300 p-5 rounded-lg w-[300px] shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 cursor-pointer'

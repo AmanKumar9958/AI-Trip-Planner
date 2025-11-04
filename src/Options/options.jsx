@@ -19,5 +19,43 @@ export const SelectMembers = [
     { icon: <GiThreeFriends size={30} />, people: "Friends", }
 ];
 
-export const AI_PROMPT = 'Generate Travel Plan for Location: {location} for {totalDays} days for {traveler} with a {budget} budget, Give me a Hotels options list with Hotel Name, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with place name, place details, place image url, Geo coordinates, ticket pricing, Time to travel each of the location for 3 days plan with best time to visit in JSON format'
+export const AI_PROMPT = `
+Generate a detailed travel itinerary for a trip to "{location}" for "{totalDays}" days, traveling with "{traveler}", with a budget of "{budget}".
+
+Return output ONLY as strict JSON with EXACT key names and types as below. Do not include markdown code fences or any extra text.
+
+{
+    "tripData": {
+        "HotelOptions": [
+            {
+                "HotelName": "string",
+                "HotelAddress": "string",
+                "PriceRange": 0,
+                "HotelImageURL": "string",
+                "GeoCoordinates": "string",
+                "Rating": 0,
+                "Description": "string"
+            }
+        ],
+        "Itinerary": [
+            {
+                "Day": "Day 1",
+                "PlaceName": "string",
+                "PlaceDetails": "string",
+                "PlaceImageURL": "string",
+                "GeoCoordinates": "string",
+                "TicketPricing": "string",
+                "TravelTime": "string",
+                "BestTimeToVisit": "string"
+            }
+        ]
+    }
+}
+
+Rules:
+- Provide exactly {totalDays} days in Itinerary (Day 1 .. Day {totalDays}).
+- Keep all key names exactly as shown.
+- Provide at least 3 entries in HotelOptions, with realistic values.
+- Do not include any text outside the JSON object.
+`;
 

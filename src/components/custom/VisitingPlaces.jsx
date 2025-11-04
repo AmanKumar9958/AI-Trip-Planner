@@ -3,12 +3,13 @@ import { FaMap, FaClock } from "react-icons/fa6";
 import { IoTicketSharp } from "react-icons/io5";
 
 const VisitingPlaces = ({ trip }) => {
-    // Check if trip data exists and is correctly structured
-    if (!trip || !trip.tripData || !trip.tripData.tripData) {
+    // Accept either nested trip.tripData.tripData or flat trip.tripData
+    if (!trip || !trip.tripData) {
         return <p className='text-gray-600 text-center mt-5'>Loading Your Daily Trip Plan...</p>;
     }
 
-    const itinerary = trip.tripData.tripData.Itinerary;
+    const root = trip.tripData.tripData || trip.tripData;
+    const itinerary = root.Itinerary;
 
     if (!itinerary || !Array.isArray(itinerary)) {
         return <p className='text-gray-600 text-center mt-5'>No trip data available.</p>;

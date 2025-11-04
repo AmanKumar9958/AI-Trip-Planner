@@ -1,11 +1,12 @@
-# This rule forces the redirect from the Netlify subdomain to the primary domain
+# Redirect Netlify subdomain to primary domain
 [[redirects]]
   from = "https://trip-genius.netlify.app/*"
   to = "https://trip-genius.codewithaman.tech/:splat"
   status = 301
   force = true
 
-# Your existing SPA rewrite rule should be below it
+# SPA fallback: serve index.html for all routes while preserving the path
 [[redirects]]
   from = "/*"
   to = "/index.html"
+  status = 200

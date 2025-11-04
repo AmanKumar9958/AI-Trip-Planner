@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import { HiMenu, HiX } from "react-icons/hi";
 import { AuthContext } from '../../Context/AuthContext';
 import ViewTripButton from './ViewTripButton';
+import Avatar from './Avatar';
 
 const Header = () => {
     const { user, loginUser, logoutUser } = useContext(AuthContext);
@@ -65,16 +66,12 @@ const Header = () => {
                                     <ViewTripButton />
                                 </div>
                                 <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors h-10">
-                                    <img 
-                                        src={user.picture} 
-                                        alt={user.name} 
-                                        className="w-12 h-12 rounded-full border-2 border-indigo-100 shadow-sm"
-                                    />
+                                    <Avatar src={user.picture} name={user.name} size={44} className="ring-2 ring-indigo-100 shadow-sm" />
                                     <span className="text-md font-medium text-gray-700">{user.name}</span>
                                 </div>
                                 <Button 
                                     onClick={logoutUser} 
-                                    className="h-10 text-sm font-medium text-gray-600 hover:text-white hover:bg-red-600 px-4 py-2 rounded-lg transition-colors bg-red-500"
+                                    className="h-10 text-sm font-medium text-white hover:text-red-500 border-2 border-red-500 hover:bg-white px-4 py-2 rounded-lg transition-colors bg-red-500"
                                 >
                                     Logout
                                 </Button>
@@ -116,11 +113,7 @@ const Header = () => {
                                     {user ? (
                                         <>
                                             <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                                                <img 
-                                                    src={user.picture} 
-                                                    alt={user.name} 
-                                                    className="w-10 h-10 rounded-full border-2 border-indigo-100"
-                                                />
+                                                <Avatar src={user.picture} name={user.name} size={40} className="ring-2 ring-indigo-100" />
                                                 <div>
                                                     <p className="text-sm font-medium text-gray-900">{user.name}</p>
                                                     <p className="text-sm text-gray-500">{user.email}</p>
@@ -129,7 +122,7 @@ const Header = () => {
                                             <ViewTripButton mobile />
                                             <Button 
                                                 onClick={logoutUser}
-                                                className="w-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 px-4 py-2 rounded-lg transition-colors"
+                                                className="w-full text-sm font-medium bg-red-500 px-4 py-2 rounded-lg transition-colors"
                                             >
                                                 Logout
                                             </Button>
