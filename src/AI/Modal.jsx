@@ -9,8 +9,8 @@ const genAI = new GoogleGenerativeAI(apiKey);
 const requestedModel = (import.meta.env.VITE_GEMINI_MODEL || "").trim();
 const aliasMap = {
     // Map deprecated or account-inaccessible aliases to broadly supported ones
-    "gemini-1.5-flash": "gemini-1.5-pro",
-    "gemini-1.5-flash-latest": "gemini-1.5-pro-latest",
+    // "gemini-1.5-flash": "gemini-1.5-pro",
+    // "gemini-1.5-flash-latest": "gemini-1.5-pro-latest",
 };
 let modelId = requestedModel || "gemini-1.0-pro";
 if (aliasMap[modelId]) {
@@ -37,6 +37,10 @@ export async function generateAIResponse(prompt, config = {}) {
     let lastError;
     for (const m of candidates) {
         try {
+            // For gemini-1.0-pro, strip responseMimeType as it may not be supported or cause errors
+            if (m.includes("1.0")) {
+                delete genCfg.responseMimeType;
+            }
             const mdl = genAI.getGenerativeModel({ model: m });
             const res = await mdl.generateContent({
                 contents: [{ role: "user", parts: [{ text: prompt }]}],

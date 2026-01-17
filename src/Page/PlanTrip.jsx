@@ -99,7 +99,7 @@ const PlanTrip = () => {
             });
         } catch (err) {
             console.error("Error generating trip:", err);
-            toast.error("Failed to generate trip. Please try again.");
+            toast.error("Failed to generate trip. " + (err?.message || "Please try again."));
         } finally {
             setLoading(false);
         }
