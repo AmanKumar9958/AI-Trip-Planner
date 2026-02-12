@@ -50,28 +50,28 @@ const LocationSearch = ({onChange}) => {
   return (
     <div ref={searchRef} className="relative w-full">
       <div className="relative group">
-        <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+        <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
         <input
             type="text"
             value={query}
             onChange={handleInputChange}
             placeholder="Where do you want to go?"
-            className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-lg"
+            className="w-full pl-12 pr-4 py-4 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-lg"
         />
       </div>
 
       {suggestions.length > 0 && (
-        <ul className="absolute w-full bg-white border border-slate-100 rounded-xl mt-2 shadow-2xl max-h-64 overflow-auto z-50 divide-y divide-slate-50">
+        <ul className="absolute w-full bg-card border border-border rounded-xl mt-2 shadow-2xl max-h-64 overflow-auto z-50 divide-y divide-border">
           {suggestions.map((location, index) => (
             <li
               key={`${location.place_id}-${index}`} 
               className={`p-4 cursor-pointer flex items-center gap-3 transition-colors ${
-                selectedIndex === index ? "bg-indigo-50 text-indigo-700" : "hover:bg-slate-50 text-slate-600"
+                selectedIndex === index ? "bg-primary/10 text-primary" : "hover:bg-muted text-muted-foreground"
               }`}
               onClick={() => handleSelect(location)}
             >
-              <div className="bg-slate-100 p-2 rounded-full">
-                <FaMapMarkerAlt className="text-slate-400" />
+              <div className="bg-muted p-2 rounded-full">
+                <FaMapMarkerAlt className="text-muted-foreground" />
               </div>
               <span className="truncate font-medium">{location.display_name}</span>
             </li>
@@ -80,11 +80,11 @@ const LocationSearch = ({onChange}) => {
       )}
 
       {selectedLocation && (
-        <div className="mt-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 flex items-start gap-3 animate-fade-in">
-          <FaMapMarkerAlt className="text-indigo-500 mt-1" />
+        <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-start gap-3 animate-fade-in">
+          <FaMapMarkerAlt className="text-primary mt-1" />
           <div>
-              <p className="font-semibold text-slate-800">Selected Location</p>
-              <p className="text-sm text-slate-600">{selectedLocation.display_name}</p>
+              <p className="font-semibold text-foreground">Selected Location</p>
+              <p className="text-sm text-muted-foreground">{selectedLocation.display_name}</p>
           </div>
         </div>
       )}

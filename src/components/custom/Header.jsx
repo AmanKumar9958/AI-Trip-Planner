@@ -44,7 +44,7 @@ const Header = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ type: 'spring', stiffness: 120 }}
-            className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/60 shadow-sm"
+            className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-lg border-b border-border shadow-sm"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
@@ -58,8 +58,8 @@ const Header = () => {
                                 <img src="Favicon.svg" alt="Logo" />
                             </span>
                         </div>
-                        <span className="text-3xl font-bold text-slate-900 tracking-tight">
-                            Trip<span className="text-indigo-600">Genius</span>
+                        <span className="text-3xl font-bold text-foreground tracking-tight">
+                            Trip<span className="text-primary">Genius</span>
                         </span>
                     </Link>
 
@@ -85,7 +85,7 @@ const Header = () => {
                         ) : (
                             <Button 
                                 onClick={login} 
-                                className="flex items-center gap-2 bg-slate-900 text-white hover:bg-slate-800 px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                                className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                             >
                                 <FcGoogle className="text-xl" />
                                 <span className="text-sm font-medium">Sign in with Google</span>

@@ -39,14 +39,14 @@ const Hero = () => {
     };
 
     return (
-        <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-50">
+        <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
             
             {/* Background Decor */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-                <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+                <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                <div className="absolute top-0 -right-4 w-72 h-72 bg-accent/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-secondary/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
             </div>
 
             {/* Floating Travel Icons - Subtle */}

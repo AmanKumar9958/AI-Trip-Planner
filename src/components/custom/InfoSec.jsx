@@ -5,7 +5,7 @@ import ShareButton from './ShareButton';
 
 const InfoSec = ({trip}) => {
     if (!trip || !trip.userSelection) {
-        return <div className="h-[300px] bg-slate-100 rounded-xl animate-pulse"></div>;
+        return <div className="h-[300px] bg-muted rounded-xl animate-pulse"></div>;
     }
     return (
         <div className="w-full">
@@ -21,7 +21,7 @@ const InfoSec = ({trip}) => {
                 {/* Title Overlay */}
                 <div className="absolute bottom-6 left-6 text-white">
                      <h2 className='font-bold text-3xl sm:text-5xl flex items-center gap-3 drop-shadow-lg'>
-                        <FaMapMarkerAlt className="text-indigo-400" /> 
+                        <FaMapMarkerAlt className="text-secondary" /> 
                         {trip.userSelection.Location}
                     </h2>
                 </div>
@@ -32,16 +32,16 @@ const InfoSec = ({trip}) => {
                 
                 {/* Pills */}
                 <div className='flex flex-wrap gap-3'>
-                    <div className='flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-full border border-slate-200 text-sm font-semibold'>
-                        <FaRegCalendarAlt className="text-indigo-500" />
+                    <div className='flex items-center gap-2 px-4 py-2 bg-muted text-foreground rounded-full border border-border text-sm font-semibold'>
+                        <FaRegCalendarAlt className="text-primary" />
                         <span>{trip.userSelection.TotalDays} Days</span>
                     </div>
-                    <div className='flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-full border border-slate-200 text-sm font-semibold'>
-                        <GiWallet className="text-indigo-500" />
+                    <div className='flex items-center gap-2 px-4 py-2 bg-muted text-foreground rounded-full border border-border text-sm font-semibold'>
+                        <GiWallet className="text-primary" />
                         <span>{trip.userSelection.budget} Budget</span>
                     </div>
-                    <div className='flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-full border border-slate-200 text-sm font-semibold'>
-                        <FaUserFriends className="text-indigo-500" />
+                    <div className='flex items-center gap-2 px-4 py-2 bg-muted text-foreground rounded-full border border-border text-sm font-semibold'>
+                        <FaUserFriends className="text-primary" />
                         <span>{trip.userSelection.TravelingWith}</span>
                     </div>
                 </div>

@@ -23,7 +23,7 @@ const ShareButton = () => {
     return (
         <button 
             onClick={handleShare}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-full font-medium shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95"
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full font-medium shadow-md hover:bg-primary/90 hover:shadow-lg transition-all active:scale-95"
         >
             <FaShareAlt />
             Share

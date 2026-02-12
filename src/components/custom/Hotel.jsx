@@ -16,10 +16,10 @@ const Hotel = ({ trip }) => {
         <div className='mt-12'>
             {/* Title Section */}
             <div className="flex items-center gap-3 mb-8">
-                <div className="bg-indigo-100 p-2 rounded-lg">
+                <div className="bg-primary/20 p-2 rounded-lg">
                      <span className="text-2xl">🏨</span>
                 </div>
-                <h2 className='font-bold text-2xl text-slate-900'>Hotel Recommendations</h2>
+                <h2 className='font-bold text-2xl text-foreground'>Hotel Recommendations</h2>
             </div>
 
             {/* Hotel Grid */}
@@ -29,20 +29,20 @@ const Hotel = ({ trip }) => {
                         <div 
                             key={index} 
                             onClick={() => openGoogleMaps(item.HotelName, item.HotelAddress)}
-                            className='group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full'
+                            className='group bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full'
                         >
                             {/* Placeholder Image Div - since logic shouldn't change, we use a colored block or generic image */}
-                            <div className="h-40 bg-slate-100 flex items-center justify-center relative overflow-hidden">
+                            <div className="h-40 bg-muted flex items-center justify-center relative overflow-hidden">
                                 <span className="text-4xl opacity-20">🏨</span>
                                 <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
 
                             <div className="p-5 flex flex-col grow">
                                 <div className="flex justify-between items-start mb-2">
-                                    <h3 className='font-bold text-lg text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors'>
+                                    <h3 className='font-bold text-lg text-foreground leading-tight group-hover:text-primary transition-colors'>
                                         {item.HotelName}
                                     </h3>
-                                    <div className='flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded text-xs font-bold text-yellow-600 border border-yellow-100'>
+                                    <div className='flex items-center gap-1 bg-secondary/20 px-2 py-1 rounded text-xs font-bold text-secondary-foreground border border-secondary/30'>
                                         <FaStar className="w-3 h-3" /> {item.Rating}
                                     </div>
                                 </div>

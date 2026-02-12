@@ -32,10 +32,10 @@ const VisitingPlaces = ({ trip }) => {
     return (
         <div className='mt-16 mb-20'>
             <div className="flex items-center gap-3 mb-8">
-                <div className="bg-indigo-100 p-2 rounded-lg">
+                <div className="bg-primary/20 p-2 rounded-lg">
                      <span className="text-2xl">🗺️</span>
                 </div>
-                <h2 className='font-bold text-2xl text-slate-900'>Places to Visit</h2>
+                <h2 className='font-bold text-2xl text-foreground'>Places to Visit</h2>
             </div>
 
             <div className='space-y-12'>
@@ -43,8 +43,8 @@ const VisitingPlaces = ({ trip }) => {
                     <div key={index} className='relative'>
                         
                         {/* Day Header */}
-                        <div className="sticky top-24 z-10 bg-slate-50/95 backdrop-blur-sm py-4 mb-6 border-b border-slate-200">
-                             <h3 className='font-bold text-xl md:text-2xl text-indigo-700 capitalize'>{day}</h3>
+                        <div className="sticky top-24 z-10 bg-background/95 backdrop-blur-sm py-4 mb-6 border-b border-border">
+                             <h3 className='font-bold text-xl md:text-2xl text-primary capitalize'>{day}</h3>
                         </div>
                        
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6'>

@@ -11,14 +11,14 @@ const ViewTripButton = ({ mobile }) => {
                 <div className={`flex ${mobile ? 'flex-col space-y-3' : 'gap-4'} items-center`}>
                     
                     <Link to="/MyTrips" className={mobile ? 'w-full' : ''}>
-                        <div className={`group flex items-center justify-center gap-2 border border-slate-300 px-4 py-2 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition-all duration-300 ${mobile ? 'w-full bg-slate-50' : 'bg-transparent'}`}>
-                             <FaClipboardList className="text-slate-400 group-hover:text-indigo-500" />
-                             <span className="font-medium text-slate-700 group-hover:text-indigo-600">My Trips</span>
+                        <div className={`group flex items-center justify-center gap-2 border border-border px-4 py-2 rounded-full hover:border-primary hover:text-primary transition-all duration-300 ${mobile ? 'w-full bg-muted' : 'bg-transparent'}`}>
+                             <FaClipboardList className="text-muted-foreground group-hover:text-primary" />
+                             <span className="font-medium text-foreground group-hover:text-primary">My Trips</span>
                         </div>
                     </Link>
 
                     <Link to="/plantrip" className={mobile ? 'w-full' : ''}>
-                        <div className={`group flex items-center justify-center gap-2 border border-slate-300 px-4 py-2 rounded-full hover:bg-black hover:text-white hover:border-black transition-all duration-300 ${mobile ? 'w-full' : 'bg-transparent'}`}>
+                        <div className={`group flex items-center justify-center gap-2 border border-border px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 ${mobile ? 'w-full' : 'bg-transparent'}`}>
                             <span className='font-bold text-lg leading-none'>+</span> 
                             <span className="font-medium">Create Trip</span>
                         </div>

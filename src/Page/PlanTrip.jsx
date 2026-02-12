@@ -171,7 +171,7 @@ const PlanTrip = () => {
 
 
     return (
-        <div className="relative w-full min-h-screen bg-slate-50 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="relative w-full min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
             
             {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
@@ -201,37 +201,37 @@ const PlanTrip = () => {
             <div className="max-w-4xl mx-auto relative z-10">
                 {/* Header Section */}
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-                        Tell us your <span className="text-indigo-600">Preferences</span>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+                        Tell us your <span className="text-primary">Preferences</span>
                     </h1>
-                    <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Provide us with a few basic details, and our AI will curate the perfect itinerary tailored just for you.
                     </p>
                 </div>
 
-                <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-10 space-y-10">
+                <div className="bg-card rounded-3xl shadow-xl border border-border p-8 md:p-10 space-y-10">
                     
                     {/* Destination Search */}
                     <div className="space-y-3">
-                        <h2 className="text-xl font-semibold text-slate-800">What is your destination of choice?</h2>
+                        <h2 className="text-xl font-semibold text-foreground">What is your destination of choice?</h2>
                         <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
                     </div>
 
                     {/* Trip Duration */}
                     <div className="space-y-3">
-                        <h2 className="text-xl font-semibold text-slate-800">How many days are you planning?</h2>
+                        <h2 className="text-xl font-semibold text-foreground">How many days are you planning?</h2>
                         <input 
                             type="number" 
                             min="1"
                             placeholder="Ex. 3" 
-                            className="w-full p-4 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 text-lg shadow-sm"
+                            className="w-full p-4 bg-card border border-border rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-muted-foreground text-lg shadow-sm"
                             onChange={(e) => handleInputChange('TotalDays', e.target.value)}
                         />
                     </div>
 
                     {/* Budget Selection */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold text-slate-800">What is your Budget?</h2>
+                        <h2 className="text-xl font-semibold text-foreground">What is your Budget?</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                             {SelectBudget.map((item, index) => (
                                 <div 
@@ -239,12 +239,12 @@ const PlanTrip = () => {
                                     onClick={() => handleInputChange('budget', item.budget)}
                                     className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
                                     ${formData?.budget === item.budget 
-                                        ? 'border-indigo-600 bg-indigo-50 shadow-md transform scale-[1.02]' 
-                                        : 'border-slate-100 bg-white hover:border-indigo-200'}`}
+                                        ? 'border-primary bg-primary/10 shadow-md transform scale-[1.02]' 
+                                        : 'border-border bg-card hover:border-primary/50'}`}
                                 >
                                     <div className="text-3xl mb-1">{item.icon}</div>
-                                    <h3 className="font-bold text-slate-800">{item.budget}</h3>
-                                    <p className="text-xs text-slate-500 font-medium">{item.amount}</p>
+                                    <h3 className="font-bold text-foreground">{item.budget}</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">{item.amount}</p>
                                 </div>
                             ))}
                         </div>
@@ -252,7 +252,7 @@ const PlanTrip = () => {
 
                     {/* Member Selection */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold text-slate-800">Who are you traveling with?</h2>
+                        <h2 className="text-xl font-semibold text-foreground">Who are you traveling with?</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                             {SelectMembers.map((item, index) => (
                                 <div 
@@ -260,12 +260,12 @@ const PlanTrip = () => {
                                     onClick={() => handleInputChange("TravelingWith", item.people)}
                                     className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
                                     ${formData?.["TravelingWith"] === item.people 
-                                        ? 'border-indigo-600 bg-indigo-50 shadow-md transform scale-[1.02]' 
-                                        : 'border-slate-100 bg-white hover:border-indigo-200'}`}
+                                        ? 'border-primary bg-primary/10 shadow-md transform scale-[1.02]' 
+                                        : 'border-border bg-card hover:border-primary/50'}`}
                                 >
                                     <div className="text-3xl mb-1">{item.icon}</div>
-                                    <h3 className="font-bold text-slate-800">{item.people}</h3>
-                                    <p className="text-xs text-slate-500 font-medium">{item.amount}</p>
+                                    <h3 className="font-bold text-foreground">{item.people}</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">{item.amount}</p>
                                 </div>
                             ))}
                         </div>
@@ -276,7 +276,7 @@ const PlanTrip = () => {
                         <Button 
                             disabled={loading}
                             onClick={generateTrip}
-                            className="w-full md:w-auto h-14 px-10 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded-full font-bold shadow-lg shadow-indigo-200 transition-all hover:scale-105 flex items-center justify-center gap-3"
+                            className="w-full md:w-auto h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground text-lg rounded-full font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 flex items-center justify-center gap-3"
                         >
                             {loading ? (
                                 <AiOutlineLoading3Quarters className='animate-spin h-6 w-6' />
@@ -297,18 +297,18 @@ const PlanTrip = () => {
                 }}
             >
                 <DialogTitle className="text-center">
-                    <div className="font-bold text-2xl text-slate-900">
+                    <div className="font-bold text-2xl text-foreground">
                         Sign In Required
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText className="text-center text-slate-600 mb-4">
+                    <DialogContentText className="text-center text-muted-foreground mb-4">
                         Please sign in with Google to securely save and access your trip plans.
                     </DialogContentText>
                     <div className="flex flex-col gap-3 mt-4">
                          <Button 
                             onClick={() => login()}
-                            className="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 py-3 rounded-xl shadow-sm font-semibold text-md h-12"
+                            className="w-full flex items-center justify-center gap-3 bg-card border border-border text-foreground hover:bg-muted py-3 rounded-xl shadow-sm font-semibold text-md h-12"
                         >
                             <FcGoogle className="text-2xl" /> 
                             Sign in with Google
