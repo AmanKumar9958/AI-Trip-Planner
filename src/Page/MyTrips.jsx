@@ -56,23 +56,23 @@ const MyTrips = () => {
     };
 
     return (
-    <div className="min-h-screen bg-slate-50 py-16 px-4 md:px-8 lg:px-16">
+    <div className="min-h-screen bg-background py-16 px-4 md:px-8 lg:px-16">
             <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8">
-                    My Travel <span className="text-indigo-600">Adventures</span>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-8">
+                    My Travel <span className="text-primary">Adventures</span>
                 </h1>
 
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[...Array(3)].map((_, idx) => (
-                            <div key={idx} className="h-64 bg-slate-200 rounded-2xl animate-pulse" />
+                            <div key={idx} className="h-64 bg-muted rounded-2xl animate-pulse" />
                         ))}
                     </div>
                 ) : error ? (
-                    <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-                        <FiAlertCircle className="mx-auto h-10 w-10 text-red-400 mb-4" />
-                        <p className="text-slate-600 mb-4 text-lg">{error}</p>
-                        <button onClick={getTrips} className="px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700">
+                    <div className="text-center py-20 bg-card rounded-3xl border border-dashed border-border">
+                        <FiAlertCircle className="mx-auto h-10 w-10 text-destructive mb-4" />
+                        <p className="text-muted-foreground mb-4 text-lg">{error}</p>
+                        <button onClick={getTrips} className="px-6 py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90">
                             Retry
                         </button>
                     </div>
@@ -81,29 +81,29 @@ const MyTrips = () => {
                         {trips.map((trip) => (
                             <div 
                                 key={trip.id}
-                                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-100 overflow-hidden transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                                className="group relative bg-card rounded-2xl shadow-sm hover:shadow-xl border border-border overflow-hidden transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                                 onClick={() => navigate(`/trip/${trip.id}`)}
                             >
                                 {/* Decorative Gradient Header */}
-                                <div className="h-32 bg-linear-to-r from-indigo-500 to-purple-500 relative flex items-center justify-center">
+                                <div className="h-32 bg-primary/20 relative flex items-center justify-center">
                                     <span className="text-6xl opacity-20 select-none">✈️</span>
                                 </div>
 
                                 <div className="p-6">
-                                    <h3 className="text-xl font-bold text-slate-900 truncate mb-1">
+                                    <h3 className="text-xl font-bold text-foreground truncate mb-1">
                                         {trip.userSelection?.Location || "Unknown Destination"}
                                     </h3>
-                                    <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-4">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-4">
                                         Created {new Date().toLocaleDateString()}
                                     </p>
 
-                                    <div className="flex items-center gap-4 text-sm text-slate-600">
-                                        <div className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
-                                            <FiClock className="text-indigo-500" />
+                                    <div className="flex items-center gap-4 text-sm text-foreground">
+                                        <div className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                                            <FiClock className="text-primary" />
                                             {trip.userSelection?.TotalDays} Days
                                         </div>
-                                        <div className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
-                                            <FiUsers className="text-indigo-500" />
+                                        <div className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                                            <FiUsers className="text-primary" />
                                             {trip.userSelection?.TravelingWith}
                                         </div>
                                     </div>
@@ -112,7 +112,7 @@ const MyTrips = () => {
                                 {/* Delete Action */}
                                 <button
                                     onClick={(e) => deleteTrip(trip.id, e)}
-                                    className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 rounded-full transition-all"
+                                    className="absolute top-4 right-4 p-2 bg-black/20 backdrop-blur-sm hover:bg-card text-white hover:text-destructive rounded-full transition-all"
                                 >
                                     <FiTrash2 className="w-5 h-5" />
                                 </button>
@@ -120,20 +120,20 @@ const MyTrips = () => {
                                 {/* Delete Confirmation Overlay */}
                                 {confirmingId === trip.id && (
                                     <div 
-                                        className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-200"
+                                        className="absolute inset-0 bg-card/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-200"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <p className="font-semibold text-slate-900 mb-4">Delete this trip?</p>
+                                        <p className="font-semibold text-foreground mb-4">Delete this trip?</p>
                                         <div className="flex gap-3">
                                             <button
                                                 onClick={(e) => confirmDelete(trip.id, e)}
-                                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium"
+                                                className="px-4 py-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg text-sm font-medium"
                                             >
                                                 Confirm
                                             </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setConfirmingId(null); }}
-                                                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium"
+                                                className="px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg text-sm font-medium"
                                             >
                                                 Cancel
                                             </button>
@@ -144,13 +144,13 @@ const MyTrips = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-slate-200">
+                    <div className="text-center py-24 bg-card rounded-3xl border border-dashed border-border">
                         <div className="text-6xl mb-6">🎒</div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">No trips yet</h3>
-                        <p className="text-slate-500 mb-8">Time to dust off your passport and start planning!</p>
+                        <h3 className="text-xl font-bold text-foreground mb-2">No trips yet</h3>
+                        <p className="text-muted-foreground mb-8">Time to dust off your passport and start planning!</p>
                         <button
                             onClick={() => navigate('/plantrip')}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg shadow-indigo-200 transition-all"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-full font-semibold shadow-lg shadow-primary/20 transition-all"
                         >
                             Create New Trip
                         </button>

@@ -3,7 +3,7 @@ import { FaMapLocationDot, FaStar } from "react-icons/fa6";
 
 const Hotel = ({ trip }) => {
     if (!trip || !trip.userSelection) {
-        return <div className="p-4 text-slate-500 animate-pulse">Loading Hotels details...</div>;
+        return <div className="p-4 text-muted-foreground animate-pulse">Loading Hotels details...</div>;
     }
     const root = (trip?.tripData && (trip.tripData.tripData || trip.tripData)) || {};
     
@@ -47,21 +47,21 @@ const Hotel = ({ trip }) => {
                                     </div>
                                 </div>
                                 
-                                <p className='text-sm text-slate-500 mb-4 flex items-start gap-2 line-clamp-2'>
-                                    <FaMapLocationDot className='text-indigo-500 mt-1 shrink-0' />
+                                <p className='text-sm text-muted-foreground mb-4 flex items-start gap-2 line-clamp-2'>
+                                    <FaMapLocationDot className='text-primary mt-1 shrink-0' />
                                     {item.HotelAddress}
                                 </p>
                                 
-                                <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
-                                    <span className="text-xs text-slate-400 font-medium">Price Range</span>
-                                    <span className='text-indigo-600 font-bold text-lg'>₹{item.PriceRange}</span>
+                                <div className="mt-auto pt-4 border-t border-border flex justify-between items-center">
+                                    <span className="text-xs text-muted-foreground font-medium">Price Range</span>
+                                    <span className='text-primary font-bold text-lg'>₹{item.PriceRange}</span>
                                 </div>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-full text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                        <p className="text-slate-500">No hotels available for this location.</p>
+                    <div className="col-span-full text-center py-10 bg-muted/50 rounded-xl border border-dashed border-border">
+                        <p className="text-muted-foreground">No hotels available for this location.</p>
                     </div>
                 )}
             </div>

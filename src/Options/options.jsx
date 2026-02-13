@@ -6,17 +6,17 @@ import { GiThreeFriends } from "react-icons/gi";
 
 
 export const SelectBudget = [
-    { icon: <GiMoneyStack size={30} />, budget: "Low", amount: "₹3,000 - ₹5,000" },
-    { icon: <GiMoneyStack size={30} />, budget: "Medium", amount: "₹5,000 - ₹10,000" },
-    { icon: <GiMoneyStack size={30} />, budget: "High", amount: "₹10,000 - ₹15,000" }
+    { icon: <GiMoneyStack />, budget: "Low", amount: "₹3,000 - ₹5,000" },
+    { icon: <GiMoneyStack />, budget: "Medium", amount: "₹5,000 - ₹10,000" },
+    { icon: <GiMoneyStack />, budget: "High", amount: "₹10,000 - ₹15,000" }
 ];
 
 
 export const SelectMembers = [
-    { icon: <IoIosAirplane size={30} />, people: "Just Me", },
-    { icon: <FaGlassCheers size={30} />, people: "A Couple", },
-    { icon: <FaHouseChimney size={30} />, people: "Family", },
-    { icon: <GiThreeFriends size={30} />, people: "Friends", }
+    { icon: <IoIosAirplane />, people: "Just Me", },
+    { icon: <FaGlassCheers />, people: "A Couple", },
+    { icon: <FaHouseChimney />, people: "Family", },
+    { icon: <GiThreeFriends />, people: "Friends", }
 ];
 
 export const AI_PROMPT = `

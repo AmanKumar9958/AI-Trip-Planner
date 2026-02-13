@@ -4,14 +4,14 @@ import { IoTimeOutline } from "react-icons/io5";
 
 const VisitingPlaces = ({ trip }) => {
     if (!trip || !trip.tripData) {
-        return <div className='p-8 text-center text-slate-400 italic'>Loading Your Daily Trip Plan...</div>;
+        return <div className='p-8 text-center text-muted-foreground italic'>Loading Your Daily Trip Plan...</div>;
     }
 
     const root = trip.tripData.tripData || trip.tripData;
     const itinerary = root.Itinerary;
 
     if (!itinerary || !Array.isArray(itinerary)) {
-        return <div className='p-8 text-center text-slate-400'>No detailed itinerary available.</div>;
+        return <div className='p-8 text-center text-muted-foreground'>No detailed itinerary available.</div>;
     }
 
     const groupByDay = (itinerary) => {
@@ -51,33 +51,33 @@ const VisitingPlaces = ({ trip }) => {
                             {groupedItinerary[day].map((place, placeIndex) => (
                                 <div 
                                     key={placeIndex} 
-                                    className='group relative bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-300 cursor-pointer flex flex-col gap-3'
+                                    className='group relative bg-card border border-border p-5 rounded-2xl shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300 cursor-pointer flex flex-col gap-3'
                                     onClick={() => openGoogleMaps(place.PlaceName)}
                                 >
                                     {/* Top Row: Name & Time */}
                                     <div className="flex justify-between items-start">
-                                        <h4 className='font-bold text-lg text-slate-800 group-hover:text-indigo-600 transition-colors'>
+                                        <h4 className='font-bold text-lg text-foreground group-hover:text-primary transition-colors'>
                                             {place.PlaceName}
                                         </h4>
-                                        <span className='text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-1 rounded-md whitespace-nowrap'>
+                                        <span className='text-xs font-semibold bg-muted text-muted-foreground px-2 py-1 rounded-md whitespace-nowrap'>
                                             {place.TravelTime || 'Day Visit'}
                                         </span>
                                     </div>
 
                                     {/* Details */}
-                                    <p className='text-sm text-slate-500 leading-relaxed'>
+                                    <p className='text-sm text-muted-foreground leading-relaxed'>
                                         {place.PlaceDetails}
                                     </p>
 
                                     {/* Footer Info */}
-                                    <div className="mt-auto pt-4 flex flex-wrap gap-4 text-xs font-medium text-slate-500">
+                                    <div className="mt-auto pt-4 flex flex-wrap gap-4 text-xs font-medium text-muted-foreground">
                                         <div className="flex items-center gap-1.5">
-                                            <FaClock className='text-orange-400' /> 
+                                            <FaClock className='text-secondary-foreground' /> 
                                             <span>Best Time: {place.BestTimeToVisit || 'Anytime'}</span>
                                         </div>
                                         {place.TicketPricing && (
                                             <div className="flex items-center gap-1.5">
-                                                <FaTicketAlt className='text-green-500' /> 
+                                                <FaTicketAlt className='text-emerald-500' /> 
                                                 <span>{place.TicketPricing}</span>
                                             </div>
                                         )}
@@ -85,7 +85,7 @@ const VisitingPlaces = ({ trip }) => {
                                     
                                     {/* Map Icon Overlay */}
                                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-10 translate-x-2 group-hover:translate-x-0 transition-all">
-                                        <FaMapMarkerAlt className="text-6xl text-indigo-600" />
+                                        <FaMapMarkerAlt className="text-6xl text-primary" />
                                     </div>
                                 </div>
                             ))}

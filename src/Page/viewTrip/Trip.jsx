@@ -36,7 +36,7 @@ const Trip = () => {
     }
 
     return (
-        <div className='min-h-screen bg-slate-50'>
+        <div className='min-h-screen bg-background'>
             {/* The wrapper here ensures consistent padding across different screen sizes 
                consistent with the "SAAS" look (plenty of whitespace).
             */}

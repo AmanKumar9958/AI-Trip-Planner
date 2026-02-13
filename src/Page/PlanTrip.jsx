@@ -5,24 +5,39 @@ import { toast } from 'sonner';
 import { AI_PROMPT, SelectBudget, SelectMembers } from '../Options/options'; // Ensure path is correct
 import { generateAIResponse } from '../AI/Modal';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../Context/AuthContext';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from '../Firebase/FirebaseConfig';
 import { useNavigate } from 'react-router';
 
-const MotionSpan = motion.span;
+// Animation variants for staggered entrance
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
 
-// Floating travel icons
-const floatingIcons = ["⛵", "🏔️", "🗺️", "🌍", "🏕️", "✈️", "🎒"];
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100 }
+  }
+};
 
 const PlanTrip = () => {
     const [formData, setFormData] = useState({});
@@ -171,158 +186,218 @@ const PlanTrip = () => {
 
 
     return (
-        <div className="relative w-full min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="min-h-screen bg-background relative overflow-hidden flex flex-col items-center justify-center p-4 selection:bg-primary/20">
+            {/* Playful Background Pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
             
-            {/* Background Decorations */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                {floatingIcons.map((icon, index) => (
-                    <MotionSpan
-                        key={index}
-                        className="absolute text-4xl opacity-10 grayscale"
-                        style={{
-                            top: `${Math.random() * 100}vh`,
-                            left: `${Math.random() * 100}vw`,
-                        }}
-                        animate={{
-                            y: [-20, 20, -20],
-                            rotate: [0, 15, -15, 0],
-                        }}
-                        transition={{
-                            duration: 5 + Math.random() * 5,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                        }}
-                    >
-                        {icon}
-                    </MotionSpan>
-                ))}
-            </div>
+            {/* Animated Blobs */}
+            <motion.div 
+                className="absolute top-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+                animate={{ scale: [1, 1.2, 1], x: [0, 20, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div 
+                className="absolute bottom-10 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+                animate={{ scale: [1.2, 1, 1.2], y: [0, -30, 0] }}
+                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            />
 
-            <div className="max-w-4xl mx-auto relative z-10">
-                {/* Header Section */}
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
-                        Tell us your <span className="text-primary">Preferences</span>
-                    </h1>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Provide us with a few basic details, and our AI will curate the perfect itinerary tailored just for you.
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="relative z-10 w-full max-w-3xl"
+            >
+                {/* Header Card */}
+                <motion.div variants={itemVariants} className="text-center mb-8">
+                    <div className="inline-block relative">
+                        <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4 drop-shadow-sm tracking-tight">
+                            Tell us your <span className="text-primary relative inline-block">
+                                Preferences
+                                <svg className="absolute -bottom-2 left-0 w-full h-3 text-secondary" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" strokeLinecap="round" />
+                                </svg>
+                            </span>
+                        </h1>
+                    </div>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
+                        Just a few clicks and our AI will build your dream itinerary! 🚀
                     </p>
-                </div>
+                </motion.div>
 
-                <div className="bg-card rounded-3xl shadow-xl border border-border p-8 md:p-10 space-y-10">
+                {/* Main Form Container */}
+                <motion.div 
+                    variants={itemVariants}
+                    className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-9 space-y-8"
+                >
                     
-                    {/* Destination Search */}
-                    <div className="space-y-3">
-                        <h2 className="text-xl font-semibold text-foreground">What is your destination of choice?</h2>
-                        <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
+                    {/* Destination Section */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground font-bold text-base">1</span>
+                            <h2 className="text-xl font-bold text-foreground">Where to? 🗺️</h2>
+                        </div>
+                        <div className="relative group">
+                            <LocationSearch onChange={(value) => handleInputChange('Location', value)} />
+                        </div>
                     </div>
 
-                    {/* Trip Duration */}
-                    <div className="space-y-3">
-                        <h2 className="text-xl font-semibold text-foreground">How many days are you planning?</h2>
+                    {/* Duration Section */}
+                     <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground font-bold text-base">2</span>
+                            <h2 className="text-xl font-bold text-foreground">How many days? 🗓️</h2>
+                        </div>
                         <input 
                             type="number" 
                             min="1"
-                            placeholder="Ex. 3" 
-                            className="w-full p-4 bg-card border border-border rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-muted-foreground text-lg shadow-sm"
+                            placeholder="Ex. 3 days" 
+                            className="w-full p-4 bg-white border-2 border-border rounded-xl text-foreground text-lg font-medium placeholder:text-muted-foreground outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm"
                             onChange={(e) => handleInputChange('TotalDays', e.target.value)}
                         />
                     </div>
 
-                    {/* Budget Selection */}
+                    {/* Budget Section */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold text-foreground">What is your Budget?</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground font-bold text-base">3</span>
+                            <h2 className="text-xl font-bold text-foreground">What's the budget? 💰</h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {SelectBudget.map((item, index) => (
-                                <div 
+                                <motion.div 
                                     key={index} 
+                                    whileHover={{ scale: 1.03, y: -5 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => handleInputChange('budget', item.budget)}
-                                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
+                                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center text-center gap-2 relative overflow-hidden group
                                     ${formData?.budget === item.budget 
-                                        ? 'border-primary bg-primary/10 shadow-md transform scale-[1.02]' 
-                                        : 'border-border bg-card hover:border-primary/50'}`}
+                                        ? 'border-primary bg-primary/5 shadow-xl shadow-primary/10' 
+                                        : 'border-transparent bg-white shadow-md hover:border-primary/30 hover:shadow-lg'}`}
                                 >
-                                    <div className="text-3xl mb-1">{item.icon}</div>
-                                    <h3 className="font-bold text-foreground">{item.budget}</h3>
-                                    <p className="text-xs text-muted-foreground font-medium">{item.amount}</p>
-                                </div>
+                                    <span className="text-4xl mb-2 group-hover:scale-110 transition-transform duration-300 transform block">
+                                        {item.icon}
+                                    </span>
+                                    <h3 className="font-bold text-lg text-foreground">{item.budget}</h3>
+                                    <p className="text-xs text-muted-foreground">{item.amount}</p>
+                                    
+                                    {/* Selection Checkmark */}
+                                    {formData?.budget === item.budget && (
+                                        <motion.div 
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute top-3 right-3 text-primary"
+                                        >
+                                            <svg className="w-5 h-5 border-2 border-primary rounded-full p-0.5 bg-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </motion.div>
+                                    )}
+                                </motion.div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Member Selection */}
+                    {/* Companions Section */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold text-foreground">Who are you traveling with?</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                         <div className="flex items-center gap-3 mb-2">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground font-bold text-base">4</span>
+                            <h2 className="text-xl font-bold text-foreground">Who's joining? 👥</h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {SelectMembers.map((item, index) => (
-                                <div 
+                                <motion.div 
                                     key={index} 
+                                    whileHover={{ scale: 1.03, y: -5 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => handleInputChange("TravelingWith", item.people)}
-                                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg flex flex-col items-center text-center gap-2
+                                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center text-center gap-2 relative overflow-hidden
                                     ${formData?.["TravelingWith"] === item.people 
-                                        ? 'border-primary bg-primary/10 shadow-md transform scale-[1.02]' 
-                                        : 'border-border bg-card hover:border-primary/50'}`}
+                                        ? 'border-primary bg-primary/5 shadow-xl shadow-primary/10' 
+                                        : 'border-transparent bg-white shadow-md hover:border-primary/30 hover:shadow-lg'}`}
                                 >
-                                    <div className="text-3xl mb-1">{item.icon}</div>
-                                    <h3 className="font-bold text-foreground">{item.people}</h3>
-                                    <p className="text-xs text-muted-foreground font-medium">{item.amount}</p>
-                                </div>
+                                    <span className="text-3xl mb-2 group-hover:rotate-12 transition-transform duration-300 block">
+                                        {item.icon}
+                                    </span>
+                                    <h3 className="font-bold text-base text-foreground">{item.people}</h3>
+                                    <p className="text-xs text-muted-foreground">{item.amount}</p>
+                                      {/* Selection Checkmark */}
+                                      {formData?.["TravelingWith"] === item.people && (
+                                        <motion.div 
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute top-3 right-3 text-primary"
+                                        >
+                                            <svg className="w-5 h-5 border-2 border-primary rounded-full p-0.5 bg-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </motion.div>
+                                    )}
+                                </motion.div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Generate Button */}
-                    <div className="pt-8 flex justify-end">
+                    {/* Submit Button */}
+                    <div className="pt-6 flex justify-end">
                         <Button 
                             disabled={loading}
                             onClick={generateTrip}
-                            className="w-full md:w-auto h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground text-lg rounded-full font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 flex items-center justify-center gap-3"
+                            className="w-full md:w-auto h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground text-lg rounded-full font-black shadow-lg shadow-primary/30 transform transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 border-b-4 border-primary/50 hover:border-primary/60"
                         >
                             {loading ? (
                                 <AiOutlineLoading3Quarters className='animate-spin h-6 w-6' />
                             ) : (
-                                <><span>Generate Trip</span> ✈️</>
+                                <>
+                                    <span>Generate My Trip</span> 
+                                    <span className="text-xl">🪄</span>
+                                </>
                             )}
                         </Button>
                     </div>
-                </div>
-            </div>
+
+                </motion.div>
+            </motion.div>
 
             {/* Authentication Dialog */}
-            <Dialog 
+             <Dialog 
                 open={openDialog} 
                 onClose={() => setOpenDialog(false)}
                 PaperProps={{
-                    style: { borderRadius: 20, padding: 10 }
+                    style: { 
+                        borderRadius: 24, 
+                        padding: 10,
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                    }
                 }}
             >
-                <DialogTitle className="text-center">
-                    <div className="font-bold text-2xl text-foreground">
-                        Sign In Required
+                <DialogTitle className="text-center pt-8">
+                    <div className="font-black text-3xl text-primary mb-2">
+                        Sign In Needed!
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText className="text-center text-muted-foreground mb-4">
-                        Please sign in with Google to securely save and access your trip plans.
+                    <DialogContentText className="text-center text-muted-foreground mb-8 text-lg">
+                        To save your amazing itinerary securely, we need you to sign in with Google. It's quick! ⚡
                     </DialogContentText>
-                    <div className="flex flex-col gap-3 mt-4">
+                    <div className="flex flex-col gap-4 px-4 pb-4">
                          <Button 
                             onClick={() => login()}
-                            className="w-full flex items-center justify-center gap-3 bg-card border border-border text-foreground hover:bg-muted py-3 rounded-xl shadow-sm font-semibold text-md h-12"
+                            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-100 hover:border-slate-200 text-slate-700 hover:bg-slate-50 py-6 rounded-2xl shadow-sm font-bold text-lg transition-all hover:scale-[1.02]"
                         >
-                            <FcGoogle className="text-2xl" /> 
+                            <FcGoogle className="text-3xl" /> 
                             Sign in with Google
                         </Button>
-                        <Button 
+                        <button 
                             onClick={() => setOpenDialog(false)} 
-                            variant="ghost" 
-                            className="text-slate-400 hover:text-slate-600"
+                            className="w-full py-3 text-slate-400 hover:text-slate-600 font-semibold text-sm transition-colors"
                         >
-                            Cancel
-                        </Button>
+                            Maybe Later
+                        </button>
                     </div>
                 </DialogContent>
-                <DialogActions></DialogActions> {/* Kept empty to use custom layout in Content */}
             </Dialog>
         </div>
     );

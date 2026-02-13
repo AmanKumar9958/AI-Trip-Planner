@@ -13,7 +13,7 @@ const Avatar = ({ src, name = '', size = 40, className = '' }) => {
 
   return (
     <div
-      className={`rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ${className}`}
+      className={`rounded-full overflow-hidden bg-secondary text-secondary-foreground flex items-center justify-center ${className}`}
       style={style}
       aria-label={name || 'User avatar'}
       title={name}

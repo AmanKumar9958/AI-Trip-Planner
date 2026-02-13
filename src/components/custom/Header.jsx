@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -16,11 +16,17 @@ const MotionDiv = motion.div;
 const Header = () => {
     const { user, loginUser, logoutUser } = useContext(AuthContext);
     const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     const login = useGoogleLogin({
         onSuccess: (response) => fetchUserData(response),
         onError: (error) => console.error("Login Error:", error),
     });
+
+    const handleLogout = () => {
+        logoutUser();
+        navigate('/');
+    };
 
     const fetchUserData = async (userInfo) => {
         try {
@@ -76,7 +82,7 @@ const Header = () => {
                                     <span className="text-sm font-semibold text-slate-700">{user.name}</span>
                                 </div>
                                 <Button 
-                                    onClick={logoutUser} 
+                                    onClick={handleLogout} 
                                     className="h-10 px-5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 rounded-full transition-all duration-200"
                                 >
                                     Logout
@@ -126,7 +132,7 @@ const Header = () => {
                                          <ViewTripButton mobile />
                                     </div>
                                     <Button 
-                                        onClick={logoutUser}
+                                        onClick={handleLogout}
                                         className="w-full text-sm font-medium bg-red-50 text-red-600 hover:bg-red-100 py-3 rounded-xl transition-colors"
                                     >
                                         Logout
