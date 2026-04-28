@@ -1,9 +1,9 @@
 # Redirect Netlify subdomain to primary domain
-[[redirects]]
-  from = "https://trip-genius.netlify.app/*"
-  to = "https://trip-genius.codewithaman.tech/:splat"
-  status = 301
-  force = true
+# [[redirects]]
+#   from = "https://trip-genius.netlify.app/*"
+#   to = "https://trip-genius.codewithaman.tech/:splat"
+#   status = 301
+#   force = true
 
 # SPA fallback: serve index.html for all routes while preserving the path
 [[redirects]]
