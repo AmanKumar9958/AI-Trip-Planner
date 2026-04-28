@@ -8,14 +8,13 @@ const genAI = new GoogleGenerativeAI(apiKey);
 // If env not set, fall back to gemini-1.0-pro which is widely available.
 const requestedModel = (import.meta.env.VITE_GEMINI_MODEL || "").trim();
 const aliasMap = {
-    // Map deprecated or account-inaccessible aliases to broadly supported ones (updated for 2026 model availability)
-    "gemini-1.5-flash": "gemini-flash-latest",
-    "gemini-1.5-pro": "gemini-flash-latest",
-    "gemini-1.0-pro": "gemini-flash-latest",
-    "gemini-pro": "gemini-flash-latest",
-    "gemini-2.0-flash": "gemini-flash-latest" // Fallback if 2.0 is rate limited
+    // Map deprecated aliases to gemini-1.5-flash which has a proper free tier
+    "gemini-flash-latest": "gemini-1.5-flash",
+    "gemini-2.0-flash": "gemini-1.5-flash",
+    "gemini-1.0-pro": "gemini-1.5-flash",
+    "gemini-pro": "gemini-1.5-flash",
 };
-let modelId = requestedModel || "gemini-1.0-pro";
+let modelId = requestedModel || "gemini-1.5-flash";
 if (aliasMap[modelId]) {
     logger.warn(`[AI] Mapping requested model '${modelId}' to '${aliasMap[modelId]}' for compatibility.`);
     modelId = aliasMap[modelId];
@@ -26,13 +25,18 @@ if (!requestedModel) {
 logger.info(`[AI] Generative model in use: ${modelId}`);
 const model = genAI.getGenerativeModel({ model: modelId });
 
-// Helper: try generating with fallback models to avoid 404s on specific accounts/regions
-const candidatesBase = [modelId, "gemini-flash-latest", "gemini-2.0-flash", "gemini-2.5-flash"];
+// Fallback chain: try each candidate until one succeeds (handles 404 and 429)
+const candidatesBase = [modelId, "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro"];
 const candidates = Array.from(new Set(candidatesBase));
 
 function is404Like(err) {
     const msg = (err && (err.message || err.toString())) || "";
     return msg.includes(" 404 ") || msg.includes("not found") || msg.includes("Not Found");
+}
+
+function is429Like(err) {
+    const msg = (err && (err.message || err.toString())) || "";
+    return msg.includes(" 429 ") || msg.includes("quota") || msg.includes("Too Many Requests") || msg.includes("RESOURCE_EXHAUSTED");
 }
 
 export async function generateAIResponse(prompt, config = {}) {
@@ -52,6 +56,10 @@ export async function generateAIResponse(prompt, config = {}) {
             return res.response?.text?.() ?? "";
         } catch (err) {
             lastError = err;
+            if (is429Like(err)) {
+                logger.warn(`[AI] Model '${m}' hit quota/rate limit (429). Trying next candidate...`);
+                continue;
+            }
             if (is404Like(err)) {
                 logger.warn(`[AI] Model '${m}' returned 404/not-found. Trying next candidate...`);
                 // Try REST v1 endpoint before moving to next candidate
